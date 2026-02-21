@@ -88,8 +88,8 @@ export default function App() {
               <Navigation size={20} />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">파리 여행 최적 교통권 추천 ©외눈이</h1>
-              <p className="text-[10px] uppercase tracking-widest opacity-50 font-semibold">2026 Edition</p>
+              <h1 className="text-xl font-bold tracking-tight">파리 여행 최적 교통권 추천</h1>
+              <p className="text-[10px] uppercase tracking-widest opacity-50 font-semibold">2026 Edition ©외눈이</p>
             </div>
           </div>
         </div>
