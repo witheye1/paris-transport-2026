@@ -307,9 +307,9 @@ export default function App() {
                 <div className="space-y-2">
                   <p className="text-xs font-bold opacity-40 uppercase tracking-wider">주의사항</p>
                   <ul className="text-sm space-y-1 list-disc list-inside opacity-80">
-                    <li>나비고 데쿠베르트는 증명사진이 필수입니다.</li>
-                    <li>모바일 나비고는 안드로이드/아이폰 모두 지원됩니다.</li>
-                    <li>공항 RER은 14€, 택시는 정찰제(약 55€)입니다.</li>
+                    <li>실물 나비고 데쿠베르트는 증명사진이 필수</li>
+                    <li>모바일 나비고는 안드로이드/아이폰 모두 지원</li>
+                    <li>택시의 경우, 편도 50€ 기준으로 산정</li>
                   </ul>
                 </div>
               </div>
