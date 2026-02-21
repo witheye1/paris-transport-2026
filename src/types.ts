@@ -159,17 +159,35 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
   let hybridTotal = hybridBreakdown.reduce((acc, curr) => acc + curr.cost, 0);
   
   // Card fee logic
+  // --- 수정된 카드 비용 및 이름 결정 로직 ---
   let hybridCardFee = 0;
   let hybridCardName = input.cardType === 'Mobile' ? '모바일 나비고' : '나비고 이지';
+
   if (input.cardType === 'Physical') {
     if (semaineUsed) {
+      // 1. 주간권 사용 시 기본 데쿠베르트(5€)
       hybridCardFee = CARD_FEES.Decouverte;
       hybridCardName = '나비고 데쿠베르트';
+
+      // 2. [예외] 주간권 범위 밖에서 공항 RER을 단독으로 타야 하는 경우 이지카드(2€) 추가
+      const needsEasyForAirport = hybridBreakdown.some(d => 
+        d.passType === '공항 RER' && !d.passType.includes('주간권')
+      );
+
+      if (needsEasyForAirport) {
+        hybridCardFee += CARD_FEES.Easy; // 총 7€
+        hybridCardName = '데쿠베르트 + 이지카드';
+      }
     } else {
-      hybridCardFee = CARD_FEES.Easy;
-      hybridCardName = '나비고 이지';
+      // 주간권 미사용 시 기본 이지카드(2€)만 추가 (공항버스나 1회권용)
+      if (!useTaxi) {
+        hybridCardFee = CARD_FEES.Easy;
+        hybridCardName = '나비고 이지';
+      }
     }
   }
+
+  // 최종 합계 계산 (기존 변수명 유지)
   hybridTotal += hybridCardFee;
 
   const results: StrategyResult[] = [
