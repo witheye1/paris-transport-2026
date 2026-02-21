@@ -161,14 +161,14 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
 
   const results: StrategyResult[] = [
     {
-      name: "1회권(t+) 조합",
+      name: "1회권 조합",
       totalCost: singleCost,
       description: `공항 왕복(${useTaxi ? '택시' : 'RER'}) + 시내 이동 1회권 결제.`,
       dailyBreakdown: singleBreakdown,
       cardName: input.cardType === 'Mobile' ? '모바일 나비고' : '나비고 이지'
     },
     {
-      name: "일일권(Jour) 조합",
+      name: "일일권(1 Day) 조합",
       totalCost: dailyCost,
       description: `공항 왕복(${useTaxi ? '택시' : 'RER'}) + 시내 체류일 일일권 이용.`,
       dailyBreakdown: dailyBreakdown,
