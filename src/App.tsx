@@ -23,12 +23,6 @@ import { format, parseISO, isAfter, getDay } from 'date-fns';
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
 export default function App() {
-  // 브라우저 탭 제목을 강제로 고정합니다.
-  if (typeof window !== 'undefined') {
-    document.title = "파리 교통권 최적화 가이드 2026";
-  }
-
-export default function App() {
   // 여기에 넣으셨던 제목 코드를 아래처럼 App 함수 바로 안쪽으로 옮겨주세요.
   if (typeof window !== 'undefined') {
     document.title = "파리 교통권 최적화 가이드 2026";
