@@ -96,8 +96,34 @@ export default function App() {
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-12">
+          {/* 홍보 섹션: 헤더 바로 아래 배치 */}
+          <div className="bg-white border-b border-[#141414]/5">
+            <div className="max-w-4xl mx-auto px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-[13px] font-medium text-[#141414]/70">
+                🇫🇷 더 많은 파리 여행 정보가 더 궁금하다면?
+              </p>
+              <div className="flex gap-2">
+                <a 
+                  href="https://blog.naver.com/witheye1" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[11px] font-bold px-4 py-2 bg-[#03C75A] text-white rounded-full hover:opacity-90 transition-all flex items-center gap-1"
+                >
+                  <span>N</span> 블로그
+                </a>
+                <a 
+                  href="https://instagram.com/eye1___" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[11px] font-bold px-4 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] text-white rounded-full hover:opacity-90 transition-all"
+                >
+                  인스타그램
+                </a>
+              </div>
+            </div>
+          </div>
+                  
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          
           <section className="lg:col-span-5 space-y-8">
             <div>
               <h2 className="text-2xl font-bold tracking-tight mb-2">Travel Details</h2>
@@ -321,7 +347,7 @@ export default function App() {
       <footer className="border-t border-[#141414]/10 py-12 bg-white/50">
         <div className="max-w-4xl mx-auto px-6 text-center space-y-4">
           <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">
-            Paris Transport Algorithm &copy; 2026
+            Paris Transport Optimizer &copy; 2026
           </p>
           <div className="flex justify-center gap-8 opacity-20">
             <TrainFront size={24} />
