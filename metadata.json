@@ -1,0 +1,5 @@
+{
+  "name": "Paris Pass Optimizer 2026",
+  "description": "파리 여행 일정과 수하물 상태를 분석하여 가장 저렴한 교통권 조합을 제안합니다.",
+  "requestFramePermissions": []
+}
