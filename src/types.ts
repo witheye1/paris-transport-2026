@@ -71,18 +71,31 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
   });
   const singleCost = singleBreakdown.reduce((acc, curr) => acc + curr.cost, 0) + (input.cardType === 'Physical' ? CARD_FEES.Easy : 0);
 
-  // 2. Daily Pass Strategy
+  // 2. Daily Pass Strategy (일일권 조합 전략)
   const dailyBreakdown: DailyDetail[] = days.map((day, i) => {
     const isArrival = i === 0;
     const isDeparture = i === days.length - 1;
+  
+    // 공항 이동일 (첫날/마지막날)
     if (isArrival || isDeparture) {
-      return { date: format(day, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost };
+      return { 
+        date: format(day, 'MM/dd'), 
+        passType: useTaxi ? '공항 택시' : '공항 RER', 
+        cost: airportTransferCost 
+      };
     }
-    const cost = Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR);
-    return { date: format(day, 'MM/dd'), passType: cost === PASS_PRICES.JOUR ? '일일권(Jour)' : `1회권 ${input.dailyTrips}회`, cost };
+  
+    // 수정 포인트: Math.min을 제거하고 무조건 일일권 가격(12.3) 적용
+    return { 
+      date: format(day, 'MM/dd'), 
+      passType: '일일권(Jour)', 
+      cost: 12.30 // 보내주신 2026년 인상 가격 고정 적용
+    };
   });
+  
+  // 전체 비용 계산 (카드 발급비 포함)
   const dailyCost = dailyBreakdown.reduce((acc, curr) => acc + curr.cost, 0) + (input.cardType === 'Physical' ? CARD_FEES.Easy : 0);
-
+  
   // 3. Hybrid / Weekly Strategy
   const weeks: Date[][] = [];
   let currentWeek: Date[] = [];
