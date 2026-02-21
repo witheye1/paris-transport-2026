@@ -2,7 +2,12 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
+export default function App() {
+  // 브라우저 탭 제목을 강제로 고정합니다.
+  if (typeof window !== 'undefined') {
+    document.title = "파리 교통권 최적화 가이드 2026";
+  }
+  
 import React, { useState, useMemo } from 'react';
 import { 
   Calendar, 
