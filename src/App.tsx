@@ -23,10 +23,10 @@ import { format, parseISO, isAfter, getDay } from 'date-fns';
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
 export default function App() {
-  // 여기에 넣으셨던 제목 코드를 아래처럼 App 함수 바로 안쪽으로 옮겨주세요.
   if (typeof window !== 'undefined') {
     document.title = "파리 교통권 최적화 가이드 2026";
   }
+
   const [input, setInput] = useState<TravelInput>({
     arrivalDate: format(new Date(), 'yyyy-MM-dd'),
     departureDate: format(new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
@@ -65,8 +65,6 @@ export default function App() {
   };
 
   const getDayColor = (dateStr: string) => {
-    // dateStr is MM/dd, but we need the year to get the correct day of week
-    // Since we only have MM/dd in breakdown, let's parse it using the arrival year
     const year = parseISO(input.arrivalDate).getFullYear();
     const date = parseISO(`${year}-${dateStr.replace('/', '-')}`);
     const day = getDay(date);
@@ -83,7 +81,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F0] text-[#141414] font-sans selection:bg-[#5A5A40] selection:text-white">
-      {/* Header */}
       <header className="border-b border-[#141414]/10 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -101,7 +98,6 @@ export default function App() {
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
-          {/* Input Section */}
           <section className="lg:col-span-5 space-y-8">
             <div>
               <h2 className="text-2xl font-bold tracking-tight mb-2">Travel Details</h2>
@@ -109,8 +105,8 @@ export default function App() {
             </div>
 
             <div className="space-y-6">
-              {/* Dates */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* 날짜 입력 섹션 - 모바일 대응 수정 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
                     <Calendar size={12} /> Paris in
@@ -120,7 +116,8 @@ export default function App() {
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all text-sm appearance-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -132,18 +129,19 @@ export default function App() {
                     name="departureDate"
                     value={input.departureDate}
                     onChange={handleInputChange}
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all text-sm appearance-none"
                   />
                 </div>
               </div>
 
-              {/* Bags & Trips */}
+              {/* 수하물 선택 및 기타 설정은 기존과 동일 */}
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
                     <Briefcase size={12} /> 수하물 선택
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {[
                       { id: 'Backpack', label: '백팩' },
                       { id: 'Backpack+Carrier', label: '백팩+캐리어1개' },
@@ -152,7 +150,7 @@ export default function App() {
                       <button
                         key={opt.id}
                         onClick={() => setInput(p => ({ ...p, bagOption: opt.id as any }))}
-                        className={`flex-1 text-center px-2 py-3 rounded-xl border transition-all text-[11px] font-bold ${
+                        className={`flex-1 min-w-[100px] text-center px-2 py-3 rounded-xl border transition-all text-[11px] font-bold ${
                           input.bagOption === opt.id ? 'bg-[#141414] text-white shadow-lg' : 'bg-white border-[#141414]/10 hover:bg-[#141414]/5'
                         }`}
                       >
@@ -186,7 +184,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Card Type */}
               <div className="space-y-2">
                 <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
                   <CreditCard size={12} /> 카드 선택
@@ -211,7 +208,7 @@ export default function App() {
             </div>
           </section>
 
-          {/* Results Section */}
+          {/* Results Section 및 Footer는 기존과 동일 */}
           <section className="lg:col-span-7 space-y-8">
             <div className="flex items-end justify-between">
               <div>
@@ -242,40 +239,38 @@ export default function App() {
                     
                     <div className="flex items-start justify-between mb-6 text-[#141414]">
                       <div className="space-y-1">
-                        <p className={`text-[11px] uppercase tracking-widest font-bold opacity-40`}>
+                        <p className="text-[11px] uppercase tracking-widest font-bold opacity-40">
                           Strategy {idx + 1}
                         </p>
                         <h3 className="text-xl font-bold">{res.name}</h3>
                         {res.cardName && (
-                          <p className={`text-[10px] font-bold uppercase tracking-widest text-[#141414]/40`}>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#141414]/40">
                             {res.cardName}
                           </p>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className={`text-[11px] uppercase tracking-widest font-bold opacity-40`}>
+                        <p className="text-[11px] uppercase tracking-widest font-bold opacity-40">
                           Estimated Cost
                         </p>
                         <p className="text-3xl font-bold">€{res.totalCost.toFixed(2)}</p>
                       </div>
                     </div>
 
-                    <div className={`p-4 rounded-xl mb-6 bg-[#F5F5F0] text-[#141414]`}>
+                    <div className="p-4 rounded-xl mb-6 bg-[#F5F5F0] text-[#141414]">
                       <p className="text-sm leading-relaxed opacity-90 mb-4">
                         {res.description}
                       </p>
-                      
-                      {/* Daily Breakdown */}
                       <div className="space-y-2 border-t border-current/10 pt-4">
                         <p className="text-[10px] uppercase tracking-wider font-bold opacity-50 mb-2">날짜별 상세 정보</p>
                         <div className="grid grid-cols-1 gap-1">
                           {res.dailyBreakdown.map((day, dIdx) => (
-                            <div key={dIdx} className="flex justify-between text-xs items-center">
+                            <div key={dIdx} className="flex justify-between text-[11px] items-center">
                               <div className="flex items-center gap-2">
                                 <span className={getDayColor(day.date)}>{day.date} ({getDayName(day.date)})</span>
                               </div>
-                              <span className="font-medium flex-1 text-center px-4">{day.passType}</span>
-                              <span className="font-mono w-16 text-right">€{day.cost.toFixed(2)}</span>
+                              <span className="font-medium flex-1 text-center px-2">{day.passType}</span>
+                              <span className="font-mono w-14 text-right">€{day.cost.toFixed(2)}</span>
                             </div>
                           ))}
                         </div>
@@ -295,13 +290,11 @@ export default function App() {
               </AnimatePresence>
             </div>
 
-            {/* Selection Reason / Advice */}
             <div className="bg-white rounded-2xl border border-[#141414]/10 p-8 space-y-6">
               <div className="flex items-center gap-2 text-[#5A5A40]">
                 <AlertCircle size={20} />
                 <h4 className="font-bold text-sm uppercase tracking-widest">Expert Advice</h4>
               </div>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <p className="text-xs font-bold opacity-40 uppercase tracking-wider">선정이유</p>
@@ -322,11 +315,9 @@ export default function App() {
               </div>
             </div>
           </section>
-
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-[#141414]/10 py-12 bg-white/50">
         <div className="max-w-4xl mx-auto px-6 text-center space-y-4">
           <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">
