@@ -97,7 +97,7 @@ export default function App() {
 
       <main className="max-w-4xl mx-auto px-6 py-12">
           {/* 홍보 섹션: 헤더 바로 아래 배치 */}
-          <div className="bg-white border-b border-[#141414]/5">
+          <div className="bg-white border border-[#141414]/10 rounded-2xl mb-12 shadow-sm">
             <div className="max-w-4xl mx-auto px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
               <p className="text-[13px] font-medium text-[#141414]/70">
                 🇫🇷 더 많은 파리 여행 정보가 더 궁금하다면?
