@@ -165,7 +165,7 @@ export default function App() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                    <Briefcase size={12} /> 수하물 선택
+                    <Briefcase size={12} /> 수하물 선택 (1인 기준)
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {[
