@@ -123,34 +123,31 @@ export default function App() {
             </div>
             
             <div className="space-y-6">
-              {/* 날짜 입력 섹션 - 가로 늘어남 방지 및 사각형 유지 */}
-              <div className="flex flex-col sm:flex-row gap-4 w-full">
-                {/* Paris In */}
+              {/* 어제처럼 깔끔한 크기로 고정하면서 '완료' 버튼도 살리는 코드 */}
+              <div className="flex gap-3 w-full">
                 <div className="flex-1 min-w-0 space-y-2">
-                  <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> PARIS IN
+                  <label className="text-[11px] uppercase font-bold opacity-50 flex items-center gap-1">
+                    <Calendar size={12} /> Paris in
                   </label>
                   <input 
                     type="date" 
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
-                    /* block과 w-full을 주되, 부모의 min-w-0이 너비를 제어합니다 */
-                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[48px] text-sm focus:outline-none transition-all box-border"
+                    /* 어제 코드에서 appearance-none만 빼고 너비를 고정했습니다 */
+                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
                   />
                 </div>
-            
-                {/* Paris Out */}
                 <div className="flex-1 min-w-0 space-y-2">
-                  <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> PARIS OUT
+                  <label className="text-[11px] uppercase font-bold opacity-50 flex items-center gap-1">
+                    <Calendar size={12} /> Paris out
                   </label>
                   <input 
                     type="date" 
                     name="departureDate"
                     value={input.departureDate}
                     onChange={handleInputChange}
-                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[48px] text-sm focus:outline-none transition-all box-border"
+                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
                   />
                 </div>
               </div>
