@@ -133,8 +133,9 @@ export default function App() {
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
-                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all text-sm appearance-none"
+                    /* 중요: 아래 className에서 appearance-none을 반드시 제거하세요 */
+                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all"
+                    /* 인라인 style 속성이 있다면 아예 삭제하거나 빈 객체로 두세요 */
                   />
                 </div>
                 <div className="space-y-2">
