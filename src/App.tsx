@@ -122,39 +122,37 @@ export default function App() {
               <p className="text-sm opacity-60">여행 정보를 입력하면 최적의 알고리즘이 가동됩니다.</p>
             </div>
             
-            <div className="space-y-6">
-              {/* 가로 겹침 방지 및 모바일 나란히 정렬 최적화 */}
-              <div className="grid grid-cols-2 gap-3 w-full">
-                
-                {/* Paris In - min-w-0으로 내부 팽창 차단 */}
-                <div className="min-w-0 space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1 truncate">
-                    <Calendar size={12} className="shrink-0" /> PARIS IN
-                  </label>
-                  <input 
-                    type="date" 
-                    name="arrivalDate"
-                    value={input.arrivalDate}
-                    onChange={handleInputChange}
-                    /* block과 w-full로 사각형 유지, padding을 살짝 줄여 공간 확보 */
-                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-2 py-2.5 min-h-[48px] text-[13px] focus:outline-none transition-all box-border"
-                  />
-                </div>
+            <div className="space-y-6"> {/* 위아래 간격을 적절히 줍니다 */}
+              
+              {/* Paris In - 한 줄을 꽉 채우는 세로 배치 */}
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
+                  <Calendar size={12} /> PARIS IN
+                </label>
+                <input 
+                  type="date" 
+                  name="arrivalDate"
+                  value={input.arrivalDate}
+                  onChange={handleInputChange}
+                  /* 원래의 text-sm으로 복구하고 너비를 100%로 씁니다 */
+                  className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
+                />
+              </div>
             
-                {/* Paris Out - 동일 설정 적용 */}
-                <div className="min-w-0 space-y-2">
-                  <label className="text-[10px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1 truncate">
-                    <Calendar size={12} className="shrink-0" /> PARIS OUT
-                  </label>
-                  <input 
-                    type="date" 
-                    name="departureDate"
-                    value={input.departureDate}
-                    onChange={handleInputChange}
-                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-2 py-2.5 min-h-[48px] text-[13px] focus:outline-none transition-all box-border"
-                  />
-                </div>
-              </div>            
+              {/* Paris Out - 동일하게 한 줄을 다 사용합니다 */}
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
+                  <Calendar size={12} /> PARIS OUT
+                </label>
+                <input 
+                  type="date" 
+                  name="departureDate"
+                  value={input.departureDate}
+                  onChange={handleInputChange}
+                  className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
+                />
+              </div>
+            </div>       
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
