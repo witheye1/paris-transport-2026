@@ -123,35 +123,38 @@ export default function App() {
             </div>
             
             <div className="space-y-6">
-              {/* 어제처럼 깔끔한 크기로 고정하면서 '완료' 버튼도 살리는 코드 */}
-              <div className="flex gap-3 w-full">
-                <div className="flex-1 min-w-0 space-y-2">
-                  <label className="text-[11px] uppercase font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> Paris in
+              {/* 가로 겹침 방지 및 모바일 나란히 정렬 최적화 */}
+              <div className="grid grid-cols-2 gap-3 w-full">
+                
+                {/* Paris In - min-w-0으로 내부 팽창 차단 */}
+                <div className="min-w-0 space-y-2">
+                  <label className="text-[10px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1 truncate">
+                    <Calendar size={12} className="shrink-0" /> PARIS IN
                   </label>
                   <input 
                     type="date" 
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
-                    /* 어제 코드에서 appearance-none만 빼고 너비를 고정했습니다 */
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
+                    /* block과 w-full로 사각형 유지, padding을 살짝 줄여 공간 확보 */
+                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-2 py-2.5 min-h-[48px] text-[13px] focus:outline-none transition-all box-border"
                   />
                 </div>
-                <div className="flex-1 min-w-0 space-y-2">
-                  <label className="text-[11px] uppercase font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> Paris out
+            
+                {/* Paris Out - 동일 설정 적용 */}
+                <div className="min-w-0 space-y-2">
+                  <label className="text-[10px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1 truncate">
+                    <Calendar size={12} className="shrink-0" /> PARIS OUT
                   </label>
                   <input 
                     type="date" 
                     name="departureDate"
                     value={input.departureDate}
                     onChange={handleInputChange}
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
+                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-2 py-2.5 min-h-[48px] text-[13px] focus:outline-none transition-all box-border"
                   />
                 </div>
-              </div>
-            
+              </div>            
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
