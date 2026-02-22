@@ -122,11 +122,11 @@ export default function App() {
               <p className="text-sm opacity-60">여행 정보를 입력하면 최적의 알고리즘이 가동됩니다.</p>
             </div>
             
-            <div className="space-y-6"> {/* 1번 열기 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* 2번 열기 */}
-                
-                {/* Paris In 섹션 */}
-                <div className="space-y-2"> {/* 3번 열기 */}
+            <div className="space-y-6">
+              {/* 날짜 입력 섹션: 사각형 모양을 유지하며 너비를 고정합니다 */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Paris In */}
+                <div className="flex-1 min-w-0 space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
                     <Calendar size={12} /> Paris in
                   </label>
@@ -135,12 +135,13 @@ export default function App() {
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] focus:outline-none text-sm"
+                    /* block과 w-full을 사용하여 부모 상자 안에서 사각형 모양을 꽉 채웁니다 */
+                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] text-sm focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all box-border"
                   />
-                </div> {/* 3번 닫기 */}
+                </div>
             
-                {/* Paris Out 섹션 */}
-                <div className="space-y-2"> {/* 4번 열기 */}
+                {/* Paris Out */}
+                <div className="flex-1 min-w-0 space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
                     <Calendar size={12} /> Paris out
                   </label>
@@ -149,11 +150,10 @@ export default function App() {
                     name="departureDate"
                     value={input.departureDate}
                     onChange={handleInputChange}
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] focus:outline-none text-sm"
+                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] text-sm focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all box-border"
                   />
-                </div> {/* 4번 닫기 */}
-            
-              </div> {/* 2번 닫기 */}
+                </div>
+              </div>
             
               <div className="space-y-4">
                 <div className="space-y-2">
