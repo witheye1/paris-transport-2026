@@ -123,34 +123,34 @@ export default function App() {
             </div>
             
             <div className="space-y-6">
-              {/* 날짜 입력 섹션: 사각형 모양을 유지하며 너비를 고정합니다 */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              {/* 날짜 입력 섹션 - 가로 늘어남 방지 및 사각형 유지 */}
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
                 {/* Paris In */}
                 <div className="flex-1 min-w-0 space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> Paris in
+                    <Calendar size={12} /> PARIS IN
                   </label>
                   <input 
                     type="date" 
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
-                    /* block과 w-full을 사용하여 부모 상자 안에서 사각형 모양을 꽉 채웁니다 */
-                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] text-sm focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all box-border"
+                    /* block과 w-full을 주되, 부모의 min-w-0이 너비를 제어합니다 */
+                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[48px] text-sm focus:outline-none transition-all box-border"
                   />
                 </div>
             
                 {/* Paris Out */}
                 <div className="flex-1 min-w-0 space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> Paris out
+                    <Calendar size={12} /> PARIS OUT
                   </label>
                   <input 
                     type="date" 
                     name="departureDate"
                     value={input.departureDate}
                     onChange={handleInputChange}
-                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] text-sm focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all box-border"
+                    className="block w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[48px] text-sm focus:outline-none transition-all box-border"
                   />
                 </div>
               </div>
