@@ -147,7 +147,6 @@ export default function App() {
                     name="departureDate"
                     value={input.departureDate}
                     onChange={handleInputChange}
-                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                     className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all text-sm appearance-none"
                   />
                 </div>
