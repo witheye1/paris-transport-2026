@@ -297,20 +297,37 @@ export default function App() {
                           {res.description}
                         </p>
                         <div className="space-y-2 border-t border-current/10 pt-4">
-                          <p className="text-[10px] uppercase tracking-wider font-bold opacity-50 mb-2 text-left">날짜별 상세 정보</p>
+                          <p className="text-[10px] uppercase tracking-wider font-bold opacity-50 mb-2 text-left">날짜별 상세 정보 및 카드 비용</p>
                           <div className="grid grid-cols-1 gap-1">
                             {res.dailyBreakdown.map((day, dIdx) => (
-                              <div key={dIdx} className="flex justify-between text-[11px] items-center">
-                                <div className="flex items-center gap-2">
-                                  <span className={getDayColor(day.date)}>{day.date} ({getDayName(day.date)})</span>
+                              <React.Fragment key={dIdx}>
+                                {/* 1. 카드 구매 시점 표시 (비용이 있는 경우만) */}
+                                {day.cost > 0 && (day.passType.includes('신규구매') || day.passType.includes('이지카드')) && (
+                                  <div className="flex justify-between text-[11px] items-center bg-[#141414]/5 px-2 py-1 rounded-md mb-1">
+                                    <span className="font-bold">💳 {day.passType.includes('데쿠베르트') ? '나비고 데쿠베르트 발급' : '나비고 이지카드 발급'}</span>
+                                    <span className="font-mono text-orange-600">
+                                      +€{day.passType.includes('데쿠베르트') ? '5.00' : '2.00'}
+                                    </span>
+                                  </div>
+                                )}
+                        
+                                {/* 2. 기존 일자별 교통비 표시 */}
+                                <div className="flex justify-between text-[11px] items-center px-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className={getDayColor(day.date)}>{day.date} ({getDayName(day.date)})</span>
+                                  </div>
+                                  <span className="font-medium flex-1 text-center px-2">
+                                    {/* '신규구매' 텍스트를 제거하고 깔끔하게 교통권 명칭만 표출 */}
+                                    {day.passType.replace(/ \(.*구매\)/, "").replace(" (이지카드)", "")}
+                                  </span>
+                                  <span className="font-mono w-14 text-right">€{day.cost.toFixed(2)}</span>
                                 </div>
-                                <span className="font-medium flex-1 text-center px-2">{day.passType}</span>
-                                <span className="font-mono w-14 text-right">€{day.cost.toFixed(2)}</span>
-                              </div>
+                              </React.Fragment>
                             ))}
                           </div>
                         </div>
                       </div>
+                        
 
                       <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider">
                         <div className="flex items-center gap-1">
