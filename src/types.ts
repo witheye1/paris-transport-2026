@@ -197,7 +197,15 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
       description: semaineUsed ? "주간권(Semaine)을 포함한 가장 경제적인 조합입니다." : "일정이 짧아 1회권/일일권 조합이 더 유리합니다.",
       dailyBreakdown: hybridBreakdown,
       cardName: input.cardType === 'Mobile' ? '모바일 나비고' : (decouverteRequired ? '데쿠베르트 + 이지카드' : '나비고 이지'),
-      isRecommended: true
     }
-  ].sort((a, b) => a.totalCost - b.totalCost);
+  ].sort((a, b) => {
+    // 1. 비용이 다르면 저렴한 순서
+    if (Math.abs(a.totalCost - b.totalCost) > 0.01) return a.totalCost - b.totalCost;
+    // 2. 비용이 같으면 '1회권 > 일일권 > 하이브리드' 순으로 우선순위 부여
+    const priority: Record<string, number> = { "1회권 조합": 1, "일일권 조합": 2, "최적 하이브리드": 3 };
+    return priority[a.name] - priority[b.name];
+  }).map((res, idx) => ({
+    ...res,
+    isRecommended: idx === 0 // 정렬 후 가장 첫 번째 결과에만 배지 부여
+  }));
 }
