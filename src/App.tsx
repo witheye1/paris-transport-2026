@@ -121,11 +121,12 @@ export default function App() {
               <h2 className="text-2xl font-bold tracking-tight mb-2">Travel Details</h2>
               <p className="text-sm opacity-60">여행 정보를 입력하면 최적의 알고리즘이 가동됩니다.</p>
             </div>
-
-            <div className="space-y-6">
-              {/* --- 복구된 날짜 입력 섹션 --- */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2 overflow-hidden">
+            
+            <div className="space-y-6"> {/* 1번 열기 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* 2번 열기 */}
+                
+                {/* Paris In 섹션 */}
+                <div className="space-y-2"> {/* 3번 열기 */}
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
                     <Calendar size={12} /> Paris in
                   </label>
@@ -134,10 +135,12 @@ export default function App() {
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
-                    className="w-full max-w-full box-border bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-[16px] focus:outline-none block"
+                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] focus:outline-none text-sm"
                   />
-                </div>
-                <div className="space-y-2 overflow-hidden">
+                </div> {/* 3번 닫기 */}
+            
+                {/* Paris Out 섹션 */}
+                <div className="space-y-2"> {/* 4번 열기 */}
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
                     <Calendar size={12} /> Paris out
                   </label>
@@ -146,10 +149,12 @@ export default function App() {
                     name="departureDate"
                     value={input.departureDate}
                     onChange={handleInputChange}
-                    className="w-full max-w-full box-border bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-[16px] focus:outline-none block"
+                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-2.5 min-h-[44px] focus:outline-none text-sm"
                   />
-                </div>
-              </div>
+                </div> {/* 4번 닫기 */}
+            
+              </div> {/* 2번 닫기 */}
+            </div> {/* 1번 닫기 */}
               
               <div className="space-y-4">
                 <div className="space-y-2">
