@@ -36,7 +36,7 @@ export default function App() {
   });
 
   const results = useMemo(() => calculateStrategies(input), [input]);
-
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
       
@@ -60,22 +60,16 @@ export default function App() {
   
       // 3. 유효성 검사를 통과하거나 날짜 외의 입력인 경우 상태를 업데이트합니다.
       setInput(nextInput);
+    }; // 함수가 여기서 깔끔하게 끝나야 합니다.
+  
+    const getDayColor = (dateStr: string) => {
+      const year = parseISO(input.arrivalDate).getFullYear();
+      const date = parseISO(`${year}-${dateStr.replace('/', '-')}`);
+      const day = getDay(date);
+      if (day === 0) return 'text-red-500';
+      if (day === 6) return 'text-blue-500';
+      return 'opacity-60';
     };
-
-    setInput(prev => ({
-      ...prev,
-      [name]: name === 'dailyTrips' ? parseInt(value) : value
-    }));
-  };
-
-  const getDayColor = (dateStr: string) => {
-    const year = parseISO(input.arrivalDate).getFullYear();
-    const date = parseISO(`${year}-${dateStr.replace('/', '-')}`);
-    const day = getDay(date);
-    if (day === 0) return 'text-red-500';
-    if (day === 6) return 'text-blue-500';
-    return 'opacity-60';
-  };
 
   const getDayName = (dateStr: string) => {
     const year = parseISO(input.arrivalDate).getFullYear();
