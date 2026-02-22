@@ -35,41 +35,35 @@ export default function App() {
     cardType: 'Mobile',
   });
 
-  const results = useMemo(() => calculateStrategies(input), [input]);
+  // 날짜 유효성 체크: 도착일이 출발일보다 뒤에 있으면 true
+  const isInvalidDate = useMemo(() => {
+    return isAfter(parseISO(input.arrivalDate), parseISO(input.departureDate));
+  }, [input.arrivalDate, input.departureDate]);
+
+  // 날짜가 정상일 때만 계산 수행
+  const results = useMemo(() => {
+    if (isInvalidDate) return [];
+    return calculateStrategies(input);
+  }, [input, isInvalidDate]);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = e.target;
-      
-      // 1. 먼저 새로운 입력 값을 포함한 임시 객체를 생성합니다.
-      const nextInput = {
-        ...input,
-        [name]: name === 'dailyTrips' ? parseInt(value) : value
-      };
-  
-      // 2. 날짜 변경 시에만 논리적 유효성을 검사합니다.
-      if (name === 'arrivalDate' || name === 'departureDate') {
-        const newArrival = parseISO(nextInput.arrivalDate);
-        const newDeparture = parseISO(nextInput.departureDate);
-  
-        // 도착일이 출발일보다 늦어지는 경우에만 경고를 띄우고 업데이트를 중단합니다.
-        if (isAfter(newArrival, newDeparture)) {
-          alert("도착일은 출발일보다 빠르거나 같아야 합니다. 다시 확인해 주세요!");
-          return;
-        }
-      }
-  
-      // 3. 유효성 검사를 통과하거나 날짜 외의 입력인 경우 상태를 업데이트합니다.
-      setInput(nextInput);
-    }; // 함수가 여기서 깔끔하게 끝나야 합니다.
-  
-    const getDayColor = (dateStr: string) => {
-      const year = parseISO(input.arrivalDate).getFullYear();
-      const date = parseISO(`${year}-${dateStr.replace('/', '-')}`);
-      const day = getDay(date);
-      if (day === 0) return 'text-red-500';
-      if (day === 6) return 'text-blue-500';
-      return 'opacity-60';
-    };
+    const { name, value } = e.target;
+    
+    // 팝업(alert) 없이 즉시 상태를 업데이트하여 자유로운 날짜 선택을 보장합니다.
+    setInput(prev => ({
+      ...prev,
+      [name]: name === 'dailyTrips' ? parseInt(value) : value
+    }));
+  };
+
+  const getDayColor = (dateStr: string) => {
+    const year = parseISO(input.arrivalDate).getFullYear();
+    const date = parseISO(`${year}-${dateStr.replace('/', '-')}`);
+    const day = getDay(date);
+    if (day === 0) return 'text-red-500';
+    if (day === 6) return 'text-blue-500';
+    return 'opacity-60';
+  };
 
   const getDayName = (dateStr: string) => {
     const year = parseISO(input.arrivalDate).getFullYear();
@@ -129,7 +123,6 @@ export default function App() {
             </div>
 
             <div className="space-y-6">
-              {/* 날짜 입력 섹션 - 모바일 대응 수정 */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
@@ -159,7 +152,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 수하물 선택 및 기타 설정은 기존과 동일 */}
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
@@ -232,7 +224,6 @@ export default function App() {
             </div>
           </section>
 
-          {/* Results Section 및 Footer는 기존과 동일 */}
           <section className="lg:col-span-7 space-y-8">
             <div className="flex items-end justify-between">
               <div>
@@ -243,101 +234,123 @@ export default function App() {
 
             <div className="space-y-6">
               <AnimatePresence mode="wait">
-                {results.map((res, idx) => (
+                {isInvalidDate ? (
+                  /* 날짜 에러 시 안내 화면 */
                   <motion.div
-                    key={res.name}
-                    initial={{ opacity: 0, y: 20 }}
+                    key="date-error"
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className={`relative overflow-hidden rounded-2xl border p-6 transition-all bg-white ${
-                      res.isRecommended 
-                        ? 'border-[#141414] border-2 shadow-2xl scale-[1.02] z-10' 
-                        : 'border-[#141414]/10 opacity-80 hover:opacity-100'
-                    }`}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="bg-white border-2 border-dashed border-[#141414]/20 p-12 rounded-3xl text-center"
                   >
-                    {res.isRecommended && (
-                      <div className="absolute top-0 right-0 bg-[#141414] text-white text-[10px] font-bold px-4 py-1 rounded-bl-xl uppercase tracking-widest">
-                        Recommended
-                      </div>
-                    )}
-                    
-                    <div className="flex items-start justify-between mb-6 text-[#141414]">
-                      <div className="space-y-1">
-                        <p className="text-[11px] uppercase tracking-widest font-bold opacity-40">
-                          Strategy {idx + 1}
-                        </p>
-                        <h3 className="text-xl font-bold">{res.name}</h3>
-                        {res.cardName && (
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#141414]/40">
-                            {res.cardName}
-                          </p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[11px] uppercase tracking-widest font-bold opacity-40">
-                          Estimated Cost
-                        </p>
-                        <p className="text-3xl font-bold">€{res.totalCost.toFixed(2)}</p>
-                      </div>
+                    <div className="w-16 h-16 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <AlertCircle size={32} />
                     </div>
-
-                    <div className="p-4 rounded-xl mb-6 bg-[#F5F5F0] text-[#141414]">
-                      <p className="text-sm leading-relaxed opacity-90 mb-4">
-                        {res.description}
-                      </p>
-                      <div className="space-y-2 border-t border-current/10 pt-4">
-                        <p className="text-[10px] uppercase tracking-wider font-bold opacity-50 mb-2">날짜별 상세 정보</p>
-                        <div className="grid grid-cols-1 gap-1">
-                          {res.dailyBreakdown.map((day, dIdx) => (
-                            <div key={dIdx} className="flex justify-between text-[11px] items-center">
-                              <div className="flex items-center gap-2">
-                                <span className={getDayColor(day.date)}>{day.date} ({getDayName(day.date)})</span>
-                              </div>
-                              <span className="font-medium flex-1 text-center px-2">{day.passType}</span>
-                              <span className="font-mono w-14 text-right">€{day.cost.toFixed(2)}</span>
-                            </div>
-                          ))}
+                    <h3 className="text-lg font-bold mb-2">날짜를 조정 중이신가요?</h3>
+                    <p className="text-sm text-[#141414]/60 leading-relaxed">
+                      도착일(Paris In)이 출발일(Paris Out)보다 빠르도록<br />
+                      여행 일정을 맞춰주시면 최적의 교통권을 계산해 드립니다.
+                    </p>
+                  </motion.div>
+                ) : (
+                  results.map((res, idx) => (
+                    <motion.div
+                      key={res.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className={`relative overflow-hidden rounded-2xl border p-6 transition-all bg-white ${
+                        res.isRecommended 
+                          ? 'border-[#141414] border-2 shadow-2xl scale-[1.02] z-10' 
+                          : 'border-[#141414]/10 opacity-80 hover:opacity-100'
+                      }`}
+                    >
+                      {res.isRecommended && (
+                        <div className="absolute top-0 right-0 bg-[#141414] text-white text-[10px] font-bold px-4 py-1 rounded-bl-xl uppercase tracking-widest">
+                          Recommended
+                        </div>
+                      )}
+                      
+                      <div className="flex items-start justify-between mb-6 text-[#141414]">
+                        <div className="space-y-1">
+                          <p className="text-[11px] uppercase tracking-widest font-bold opacity-40">
+                            Strategy {idx + 1}
+                          </p>
+                          <h3 className="text-xl font-bold">{res.name}</h3>
+                          {res.cardName && (
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#141414]/40">
+                              {res.cardName}
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[11px] uppercase tracking-widest font-bold opacity-40">
+                            Estimated Cost
+                          </p>
+                          <p className="text-3xl font-bold">€{res.totalCost.toFixed(2)}</p>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider">
-                      <div className="flex items-center gap-1">
-                        <TrainFront size={14} /> {input.bagOption === 'MultiCarrier' ? 'Taxi Included' : 'RER Included'}
+                      <div className="p-4 rounded-xl mb-6 bg-[#F5F5F0] text-[#141414]">
+                        <p className="text-sm leading-relaxed opacity-90 mb-4">
+                          {res.description}
+                        </p>
+                        <div className="space-y-2 border-t border-current/10 pt-4">
+                          <p className="text-[10px] uppercase tracking-wider font-bold opacity-50 mb-2">날짜별 상세 정보</p>
+                          <div className="grid grid-cols-1 gap-1">
+                            {res.dailyBreakdown.map((day, dIdx) => (
+                              <div key={dIdx} className="flex justify-between text-[11px] items-center">
+                                <div className="flex items-center gap-2">
+                                  <span className={getDayColor(day.date)}>{day.date} ({getDayName(day.date)})</span>
+                                </div>
+                                <span className="font-medium flex-1 text-center px-2">{day.passType}</span>
+                                <span className="font-mono w-14 text-right">€{day.cost.toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Info size={14} /> 2026 Rates
+
+                      <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-1">
+                          <TrainFront size={14} /> {input.bagOption === 'MultiCarrier' ? 'Taxi Included' : 'RER Included'}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Info size={14} /> 2026 Rates
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))
+                )}
               </AnimatePresence>
             </div>
 
-            <div className="bg-white rounded-2xl border border-[#141414]/10 p-8 space-y-6">
-              <div className="flex items-center gap-2 text-[#5A5A40]">
-                <AlertCircle size={20} />
-                <h4 className="font-bold text-sm uppercase tracking-widest">Expert Advice</h4>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <p className="text-xs font-bold opacity-40 uppercase tracking-wider">선정이유</p>
-                  <p className="text-sm leading-relaxed">
-                    {results.find(r => r.isRecommended)?.name === '최적 하이브리드' 
-                      ? `도착일(${format(parseISO(input.arrivalDate), 'EEEE')})과 체류 기간을 고려했을 때, 주간권(Semaine)을 활용하는 것이 공항 이동 비용까지 커버하여 가장 경제적입니다.`
-                      : `체류 기간이 짧거나 주말을 포함하고 있어, 주간권보다는 필요한 만큼만 1회권이나 일일권을 구매하는 것이 더 저렴합니다.`}
-                  </p>
+            {!isInvalidDate && (
+              <div className="bg-white rounded-2xl border border-[#141414]/10 p-8 space-y-6">
+                <div className="flex items-center gap-2 text-[#5A5A40]">
+                  <AlertCircle size={20} />
+                  <h4 className="font-bold text-sm uppercase tracking-widest">Expert Advice</h4>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-bold opacity-40 uppercase tracking-wider">주의사항</p>
-                  <ul className="text-sm space-y-1 list-disc list-inside opacity-80">
-                    <li>실물 나비고 데쿠베르트는 증명사진이 필수</li>
-                    <li>모바일 나비고는 안드로이드/아이폰 모두 지원</li>
-                    <li>택시의 경우, 편도 50€ 기준으로 산정</li>
-                  </ul>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold opacity-40 uppercase tracking-wider">선정이유</p>
+                    <p className="text-sm leading-relaxed">
+                      {results.find(r => r.isRecommended)?.name === '최적 하이브리드' 
+                        ? `도착일(${format(parseISO(input.arrivalDate), 'EEEE')})과 체류 기간을 고려했을 때, 주간권(Semaine)을 활용하는 것이 공항 이동 비용까지 커버하여 가장 경제적입니다.`
+                        : `체류 기간이 짧거나 주말을 포함하고 있어, 주간권보다는 필요한 만큼만 1회권이나 일일권을 구매하는 것이 더 저렴합니다.`}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold opacity-40 uppercase tracking-wider">주의사항</p>
+                    <ul className="text-sm space-y-1 list-disc list-inside opacity-80">
+                      <li>실물 나비고 데쿠베르트는 증명사진이 필수</li>
+                      <li>모바일 나비고는 안드로이드/아이폰 모두 지원</li>
+                      <li>택시의 경우, 편도 50€ 기준으로 산정</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </section>
         </div>
       </main>
