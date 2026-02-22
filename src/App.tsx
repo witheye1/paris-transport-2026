@@ -123,7 +123,6 @@ export default function App() {
             </div>
             
             <div className="space-y-6"> {/* 위아래 간격을 적절히 줍니다 */}
-              
               {/* Paris In - 한 줄을 꽉 채우는 세로 배치 */}
               <div className="space-y-2">
                 <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
@@ -152,7 +151,7 @@ export default function App() {
                   className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
                 />
               </div>
-            </div>       
+            
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
