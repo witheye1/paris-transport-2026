@@ -38,25 +38,29 @@ export default function App() {
   const results = useMemo(() => calculateStrategies(input), [input]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'arrivalDate') {
-      const newArrival = parseISO(value);
-      const currentDeparture = parseISO(input.departureDate);
-      if (isAfter(newArrival, currentDeparture)) {
-        alert("도착일은 출발일 이전이어야 합니다.");
-        return;
+      const { name, value } = e.target;
+      
+      // 1. 먼저 새로운 입력 값을 포함한 임시 객체를 생성합니다.
+      const nextInput = {
+        ...input,
+        [name]: name === 'dailyTrips' ? parseInt(value) : value
+      };
+  
+      // 2. 날짜 변경 시에만 논리적 유효성을 검사합니다.
+      if (name === 'arrivalDate' || name === 'departureDate') {
+        const newArrival = parseISO(nextInput.arrivalDate);
+        const newDeparture = parseISO(nextInput.departureDate);
+  
+        // 도착일이 출발일보다 늦어지는 경우에만 경고를 띄우고 업데이트를 중단합니다.
+        if (isAfter(newArrival, newDeparture)) {
+          alert("도착일은 출발일보다 빠르거나 같아야 합니다. 다시 확인해 주세요!");
+          return;
+        }
       }
-    }
-
-    if (name === 'departureDate') {
-      const newDeparture = parseISO(value);
-      const currentArrival = parseISO(input.arrivalDate);
-      if (isAfter(currentArrival, newDeparture)) {
-        alert("출발일은 도착일 이후여야 합니다.");
-        return;
-      }
-    }
+  
+      // 3. 유효성 검사를 통과하거나 날짜 외의 입력인 경우 상태를 업데이트합니다.
+      setInput(nextInput);
+    };
 
     setInput(prev => ({
       ...prev,
