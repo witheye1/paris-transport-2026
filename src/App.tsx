@@ -231,7 +231,28 @@ export default function App() {
                 <p className="text-sm opacity-60">가장 경제적인 이동 전략을 확인하세요.</p>
               </div>
             </div>
-
+            
+            {/* 실물 카드를 선택했고, 수하물 옵션이 택시(MultiCarrier)가 아닐 때만 표시 */}
+            <AnimatePresence>
+              {input.cardType === 'Physical' && input.bagOption !== 'MultiCarrier' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 flex gap-3 items-start">
+                    <AlertCircle className="text-amber-500 shrink-0" size={18} />
+                    <p className="text-xs text-amber-800 leading-relaxed text-left">
+                      <strong>현지 팁:</strong> 파리 공항(CDG) 역에서는 실물 나비고 데쿠베르트(장기권)를 판매하지 않습니다!
+                      공항에서는 우선 <strong>나비고 이지(2€)</strong>를 사서 RER권을 충전해 시내로 이동하신 후, 
+                      숙소 근처 역에서 데쿠베르트를 만드시는 동선을 추천합니다.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
             <div className="space-y-6">
               <AnimatePresence mode="wait">
                 {isInvalidDate ? (
