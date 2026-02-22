@@ -92,7 +92,7 @@ export default function App() {
           <div className="bg-white border border-[#141414]/10 rounded-2xl mb-12 shadow-sm">
             <div className="max-w-4xl mx-auto px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
               <p className="text-[13px] font-medium text-[#141414]/70">
-                🇫🇷 더 많은 파리 여행 정보가 더 궁금하다면?
+                🇫🇷 더 많은 파리 여행 정보가 궁금하다면?
               </p>
               <div className="flex gap-2">
                 <a 
@@ -235,7 +235,7 @@ export default function App() {
             <div className="space-y-6">
               <AnimatePresence mode="wait">
                 {isInvalidDate ? (
-                  /* 날짜 에러 시 안내 화면 */
+                  /* --- 수정된 날짜 에러 안내 섹션 --- */
                   <motion.div
                     key="date-error"
                     initial={{ opacity: 0, y: 10 }}
@@ -246,13 +246,14 @@ export default function App() {
                     <div className="w-16 h-16 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                       <AlertCircle size={32} />
                     </div>
-                    <h3 className="text-lg font-bold mb-2">날짜를 조정 중이신가요?</h3>
-                    <p className="text-sm text-[#141414]/60 leading-relaxed">
+                    <h3 className="text-lg font-bold mb-2 text-[#141414]">날짜를 조정 중이신가요?</h3>
+                    <p className="text-sm text-[#141414]/60 leading-relaxed text-center">
                       도착일(Paris In)이 출발일(Paris Out)보다 빠르도록<br />
                       여행 일정을 맞춰주시면 최적의 교통권을 계산해 드립니다.
                     </p>
                   </motion.div>
                 ) : (
+                  /* --- 정상 결과 출력 섹션 --- */
                   results.map((res, idx) => (
                     <motion.div
                       key={res.name}
@@ -292,11 +293,11 @@ export default function App() {
                       </div>
 
                       <div className="p-4 rounded-xl mb-6 bg-[#F5F5F0] text-[#141414]">
-                        <p className="text-sm leading-relaxed opacity-90 mb-4">
+                        <p className="text-sm leading-relaxed opacity-90 mb-4 text-left">
                           {res.description}
                         </p>
                         <div className="space-y-2 border-t border-current/10 pt-4">
-                          <p className="text-[10px] uppercase tracking-wider font-bold opacity-50 mb-2">날짜별 상세 정보</p>
+                          <p className="text-[10px] uppercase tracking-wider font-bold opacity-50 mb-2 text-left">날짜별 상세 정보</p>
                           <div className="grid grid-cols-1 gap-1">
                             {res.dailyBreakdown.map((day, dIdx) => (
                               <div key={dIdx} className="flex justify-between text-[11px] items-center">
@@ -329,21 +330,21 @@ export default function App() {
               <div className="bg-white rounded-2xl border border-[#141414]/10 p-8 space-y-6">
                 <div className="flex items-center gap-2 text-[#5A5A40]">
                   <AlertCircle size={20} />
-                  <h4 className="font-bold text-sm uppercase tracking-widest">Expert Advice</h4>
+                  <h4 className="font-bold text-sm uppercase tracking-widest text-left">Expert Advice</h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <p className="text-xs font-bold opacity-40 uppercase tracking-wider">선정이유</p>
-                    <p className="text-sm leading-relaxed">
+                    <p className="text-xs font-bold opacity-40 uppercase tracking-wider text-left">선정이유</p>
+                    <p className="text-sm leading-relaxed text-left">
                       {results.find(r => r.isRecommended)?.name === '최적 하이브리드' 
                         ? `도착일(${format(parseISO(input.arrivalDate), 'EEEE')})과 체류 기간을 고려했을 때, 주간권(Semaine)을 활용하는 것이 공항 이동 비용까지 커버하여 가장 경제적입니다.`
                         : `체류 기간이 짧거나 주말을 포함하고 있어, 주간권보다는 필요한 만큼만 1회권이나 일일권을 구매하는 것이 더 저렴합니다.`}
                     </p>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 text-left">
                     <p className="text-xs font-bold opacity-40 uppercase tracking-wider">주의사항</p>
                     <ul className="text-sm space-y-1 list-disc list-inside opacity-80">
-                      <li>실물 나비고 데쿠베르트는 증명사진이 필수</li>
+                      <li>실물 나비고 데쿠베르트는 공항구매 불가, 증명사진 필수</li>
                       <li>모바일 나비고는 안드로이드/아이폰 모두 지원</li>
                       <li>택시의 경우, 편도 50€ 기준으로 산정</li>
                     </ul>
