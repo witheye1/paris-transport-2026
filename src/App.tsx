@@ -244,9 +244,9 @@ export default function App() {
                   <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 flex gap-3 items-start">
                     <AlertCircle className="text-amber-500 shrink-0" size={18} />
                     <p className="text-xs text-amber-800 leading-relaxed text-left">
-                      <strong>현지 팁:</strong> 파리 공항(CDG) 역에서는 실물 나비고 데쿠베르트(장기권)를 판매하지 않습니다!
+                      <strong>현지 팁:</strong> 파리 공항(CDG)에서는 실물 나비고 데쿠베르트(장기권)를 판매하지 않습니다!
                       공항에서는 우선 <strong>나비고 이지(2€)</strong>를 사서 RER권을 충전해 시내로 이동하신 후, 
-                      숙소 근처 역에서 데쿠베르트를 만드시는 동선을 추천합니다.
+                      숙소 근처 역에서 데쿠베르트를 만드실 수 있습니다(증명 사진 필수).
                     </p>
                   </div>
                 </motion.div>
