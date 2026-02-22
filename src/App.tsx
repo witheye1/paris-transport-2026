@@ -122,33 +122,34 @@ export default function App() {
               <p className="text-sm opacity-60">여행 정보를 입력하면 최적의 알고리즘이 가동됩니다.</p>
             </div>
             
-            <div className="space-y-6"> {/* 위아래 간격을 적절히 줍니다 */}
-              {/* Paris In - 한 줄을 꽉 채우는 세로 배치 */}
+            <div className="space-y-5"> {/* 입력창 그룹 사이의 간격 */}
+              
+              {/* Paris In 섹션 - 수직 배치 */}
               <div className="space-y-2">
-                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                  <Calendar size={12} /> PARIS IN
+                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1.5 ml-1">
+                  <Calendar size={13} className="opacity-70" /> PARIS IN
                 </label>
                 <input 
                   type="date" 
                   name="arrivalDate"
                   value={input.arrivalDate}
                   onChange={handleInputChange}
-                  /* 원래의 text-sm으로 복구하고 너비를 100%로 씁니다 */
-                  className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
+                  /* 스크린샷처럼 큼직하고 부드러운 사각형 디자인 적용 */
+                  className="w-full bg-white border border-[#141414]/10 rounded-2xl px-5 py-4 min-h-[56px] text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all block box-border"
                 />
               </div>
             
-              {/* Paris Out - 동일하게 한 줄을 다 사용합니다 */}
+              {/* Paris Out 섹션 - 수직 배치 */}
               <div className="space-y-2">
-                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                  <Calendar size={12} /> PARIS OUT
+                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1.5 ml-1">
+                  <Calendar size={13} className="opacity-70" /> PARIS OUT
                 </label>
                 <input 
                   type="date" 
                   name="departureDate"
                   value={input.departureDate}
                   onChange={handleInputChange}
-                  className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none block box-border"
+                  className="w-full bg-white border border-[#141414]/10 rounded-2xl px-5 py-4 min-h-[56px] text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all block box-border"
                 />
               </div>
             
