@@ -1,4 +1,4 @@
-import { addDays, differenceInDays, format, isAfter, isBefore, parseISO, startOfWeek, endOfWeek, getDay } from 'date-fns';
+import { addDays, differenceInDays, format, parseISO, getDay } from 'date-fns';
 
 export type CardType = 'Mobile' | 'Physical';
 export type BagOption = 'Backpack' | 'Backpack+Carrier' | 'MultiCarrier';
@@ -49,173 +49,155 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
 
   const useTaxi = input.bagOption === 'MultiCarrier';
   const airportTransferCost = useTaxi ? PASS_PRICES.AIRPORT_TAXI : PASS_PRICES.AIRPORT_RER;
+  const days = Array.from({ length: totalDays }, (_, i) => addDays(start, i));
 
-  const getDayList = () => {
-    const list = [];
-    for (let i = 0; i < totalDays; i++) {
-      list.push(addDays(start, i));
-    }
-    return list;
-  };
-
-  const days = getDayList();
-
-  // 1. Single Ticket Strategy
+  // --- 1. Single Ticket Strategy ---
   const singleBreakdown: DailyDetail[] = days.map((day, i) => {
-    const isArrival = i === 0;
-    const isDeparture = i === days.length - 1;
-    if (isArrival || isDeparture) {
-      return { date: format(day, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost };
-    }
+    const isAirportDay = i === 0 || i === days.length - 1;
+    if (isAirportDay) return { date: format(day, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost };
     return { date: format(day, 'MM/dd'), passType: `1회권 ${input.dailyTrips}회`, cost: input.dailyTrips * PASS_PRICES.SINGLE };
   });
-  const singleCost = singleBreakdown.reduce((acc, curr) => acc + curr.cost, 0) + (input.cardType === 'Physical' ? CARD_FEES.Easy : 0);
+  const singleTotal = singleBreakdown.reduce((acc, curr) => acc + curr.cost, 0) + (input.cardType === 'Physical' ? CARD_FEES.Easy : 0);
 
-  // 2. Daily Pass Strategy (일일권 조합 전략)
+  // --- 2. Daily Pass Strategy ---
   const dailyBreakdown: DailyDetail[] = days.map((day, i) => {
-    const isArrival = i === 0;
-    const isDeparture = i === days.length - 1;
-  
-    // 공항 이동일 (첫날/마지막날)
-    if (isArrival || isDeparture) {
-      return { 
-        date: format(day, 'MM/dd'), 
-        passType: useTaxi ? '공항 택시' : '공항 RER', 
-        cost: airportTransferCost 
-      };
-    }
-  
-    // 수정 포인트: Math.min을 제거하고 무조건 일일권 가격(12.3) 적용
-    return { 
-      date: format(day, 'MM/dd'), 
-      passType: '일일권(Jour)', 
-      cost: 12.30 // 보내주신 2026년 인상 가격 고정 적용
-    };
+    const isAirportDay = i === 0 || i === days.length - 1;
+    if (isAirportDay) return { date: format(day, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost };
+    return { date: format(day, 'MM/dd'), passType: '일일권(Jour)', cost: PASS_PRICES.JOUR };
   });
-  
-  // 전체 비용 계산 (카드 발급비 포함)
-  const dailyCost = dailyBreakdown.reduce((acc, curr) => acc + curr.cost, 0) + (input.cardType === 'Physical' ? CARD_FEES.Easy : 0);
-  
-  // 3. Hybrid / Weekly Strategy
+  const dailyTotal = dailyBreakdown.reduce((acc, curr) => acc + curr.cost, 0) + (input.cardType === 'Physical' ? CARD_FEES.Easy : 0);
+
+  // --- 3. Hybrid Strategy (The Core Logic) ---
+  let hybridBreakdown: DailyDetail[] = [];
+  let decouverteRequired = false;
+  let semaineUsed = false;
+
+  // 요일별 그룹화
   const weeks: Date[][] = [];
   let currentWeek: Date[] = [];
-  days.forEach((day, index) => {
-    if (index > 0 && getDay(day) === 1) {
-      weeks.push(currentWeek);
-      currentWeek = [];
-    }
+  days.forEach((day, i) => {
+    if (i > 0 && getDay(day) === 1) { weeks.push(currentWeek); currentWeek = []; }
     currentWeek.push(day);
   });
   weeks.push(currentWeek);
 
-  let hybridBreakdown: DailyDetail[] = [];
-  let semaineUsed = false;
-  let semaineFirstDayIndex = -1;
-
   weeks.forEach((weekDays, weekIdx) => {
-    const isArrivalWeek = weekIdx === 0;
-    const arrivalDayOfWeek = getDay(weekDays[0]);
-    const canBuySemaine = isArrivalWeek ? (arrivalDayOfWeek >= 1 && arrivalDayOfWeek <= 4) : true;
+    const isFirstWeek = weekIdx === 0;
+    const startDayOfWeek = getDay(weekDays[0]); // 1:월, 2:화, 3:수, 4:목...
 
-    let weekBasicCost = 0;
-    const weekBasicDetails: DailyDetail[] = weekDays.map((day) => {
-      const isArrivalDay = day.getTime() === start.getTime();
-      const isDepartureDay = day.getTime() === end.getTime();
-      if (isArrivalDay || isDepartureDay) {
-        return { date: format(day, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost };
-      }
-      const cost = Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR);
-      return { date: format(day, 'MM/dd'), passType: cost === PASS_PRICES.JOUR ? '일일권(Jour)' : `1회권 ${input.dailyTrips}회`, cost };
-    });
-    weekBasicCost = weekBasicDetails.reduce((acc, curr) => acc + curr.cost, 0);
-
-    if (canBuySemaine) {
-      let semaineWeekCost = PASS_PRICES.SEMAINE;
-      const semaineDetails: DailyDetail[] = weekDays.map((day, dIdx) => {
-        const isArrivalDay = day.getTime() === start.getTime();
-        const isDepartureDay = day.getTime() === end.getTime();
+    if (input.cardType === 'Physical') {
+      if (isFirstWeek) {
+        // 첫날: 무조건 이지카드로 공항 이동 (14€)
+        hybridBreakdown.push({ date: format(weekDays[0], 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER (이지카드)', cost: airportTransferCost });
         
-        // Cost logic for Semaine in breakdown: first day shows full price, others 0
-        const isFirstDayOfSemaineInThisWeek = dIdx === 0;
-        const displayCost = isFirstDayOfSemaineInThisWeek ? PASS_PRICES.SEMAINE : 0;
-
-        if (useTaxi && (isArrivalDay || isDepartureDay)) {
-          return { date: format(day, 'MM/dd'), passType: '공항 택시 + 주간권', cost: PASS_PRICES.AIRPORT_TAXI + displayCost };
+        const restOfWeek = weekDays.slice(1);
+        // 월~수 도착인 경우 다음날부터 주간권 검토 (목요일은 가성비 낮아 제외)
+        const canBuySemaine = startDayOfWeek >= 1 && startDayOfWeek <= 3 && restOfWeek.length > 0;
+        
+        if (canBuySemaine) {
+          const semaineCost = PASS_PRICES.SEMAINE + CARD_FEES.Decouverte;
+          const alternatives = restOfWeek.reduce((acc, d) => acc + Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR), 0);
+          
+          if (semaineCost < alternatives) {
+            decouverteRequired = true;
+            semaineUsed = true;
+            restOfWeek.forEach((d, idx) => {
+              const isEnd = d.getTime() === end.getTime();
+              hybridBreakdown.push({ 
+                date: format(d, 'MM/dd'), 
+                passType: isEnd && useTaxi ? '공항 택시 + 주간권' : (idx === 0 ? '주간권 시작 (데쿠베르트)' : '주간권(Semaine)'), 
+                cost: idx === 0 ? PASS_PRICES.SEMAINE : 0 
+              });
+            });
+          } else {
+            restOfWeek.forEach(d => {
+              const isEnd = d.getTime() === end.getTime();
+              if (isEnd) hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost });
+              else hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: '1회권/일일권 조합', cost: Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR) });
+            });
+          }
+        } else {
+          // 목~일 도착은 이번 주 주간권 없이 개별 결제
+          restOfWeek.forEach(d => {
+            const isEnd = d.getTime() === end.getTime();
+            if (isEnd) hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost });
+            else hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: '1회권/일일권 조합', cost: Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR) });
+          });
         }
-        return { date: format(day, 'MM/dd'), passType: '주간권(Semaine)', cost: displayCost };
-      });
-      
-      if (semaineWeekCost < weekBasicCost) {
-        hybridBreakdown = hybridBreakdown.concat(semaineDetails);
-        semaineUsed = true;
       } else {
-        hybridBreakdown = hybridBreakdown.concat(weekBasicDetails);
+        // 2주차 이후 로직 (월~일 전체 주간권 검토)
+        const weekAlternative = weekDays.reduce((acc, d) => acc + Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR), 0);
+        const semaineEffectiveCost = decouverteRequired ? PASS_PRICES.SEMAINE : PASS_PRICES.SEMAINE + CARD_FEES.Decouverte;
+        
+        if (semaineEffectiveCost < weekAlternative) {
+          if (!decouverteRequired) { decouverteRequired = true; }
+          semaineUsed = true;
+          weekDays.forEach((d, idx) => {
+            const isEnd = d.getTime() === end.getTime();
+            hybridBreakdown.push({ 
+              date: format(d, 'MM/dd'), 
+              passType: isEnd && useTaxi ? '공항 택시 + 주간권' : '주간권(Semaine)', 
+              cost: idx === 0 ? PASS_PRICES.SEMAINE : 0 
+            });
+          });
+        } else {
+          weekDays.forEach(d => {
+            const isEnd = d.getTime() === end.getTime();
+            if (isEnd) hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost });
+            else hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: '1회권/일일권 조합', cost: Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR) });
+          });
+        }
       }
     } else {
-      hybridBreakdown = hybridBreakdown.concat(weekBasicDetails);
+      // 모바일(Mobile) 로직: 기존 주간권 중심 최적화
+      const canBuy = isFirstWeek ? (startDayOfWeek >= 1 && startDayOfWeek <= 4) : true;
+      const weekAlternative = weekDays.reduce((acc, d) => acc + Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR), 0);
+      
+      if (canBuy && PASS_PRICES.SEMAINE < weekAlternative) {
+        semaineUsed = true;
+        weekDays.forEach((d, idx) => {
+          const isStart = d.getTime() === start.getTime();
+          const isEnd = d.getTime() === end.getTime();
+          const cost = idx === 0 ? PASS_PRICES.SEMAINE : 0;
+          if (useTaxi && (isStart || isEnd)) hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: '공항 택시 + 주간권', cost: PASS_PRICES.AIRPORT_TAXI + cost });
+          else hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: '주간권(Semaine)', cost });
+        });
+      } else {
+        weekDays.forEach(d => {
+          const isStart = d.getTime() === start.getTime();
+          const isEnd = d.getTime() === end.getTime();
+          if (isStart || isEnd) hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: useTaxi ? '공항 택시' : '공항 RER', cost: airportTransferCost });
+          else hybridBreakdown.push({ date: format(d, 'MM/dd'), passType: '1회권/일일권 조합', cost: Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR) });
+        });
+      }
     }
   });
 
-  let hybridTotal = hybridBreakdown.reduce((acc, curr) => acc + curr.cost, 0);
-  
-  // Card fee logic
-  // --- 수정된 카드 비용 및 이름 결정 로직 ---
-  let hybridCardFee = 0;
-  let hybridCardName = input.cardType === 'Mobile' ? '모바일 나비고' : '나비고 이지';
+  const hybridTotal = hybridBreakdown.reduce((acc, curr) => acc + curr.cost, 0) + 
+    (input.cardType === 'Physical' ? (CARD_FEES.Easy + (decouverteRequired ? CARD_FEES.Decouverte : 0)) : 0);
 
-  if (input.cardType === 'Physical') {
-    if (semaineUsed) {
-      // 1. 주간권 사용 시 기본 데쿠베르트(5€)
-      hybridCardFee = CARD_FEES.Decouverte;
-      hybridCardName = '나비고 데쿠베르트';
-
-      // 2. [예외] 주간권 범위 밖에서 공항 RER을 단독으로 타야 하는 경우 이지카드(2€) 추가
-      const needsEasyForAirport = hybridBreakdown.some(d => 
-        d.passType === '공항 RER' && !d.passType.includes('주간권')
-      );
-
-      if (needsEasyForAirport) {
-        hybridCardFee += CARD_FEES.Easy; // 총 7€
-        hybridCardName = '데쿠베르트 + 이지카드';
-      }
-    } else {
-      // 주간권 미사용 시 기본 이지카드(2€)만 추가 (공항버스나 1회권용)
-      if (!useTaxi) {
-        hybridCardFee = CARD_FEES.Easy;
-        hybridCardName = '나비고 이지';
-      }
-    }
-  }
-
-  // 최종 합계 계산 (기존 변수명 유지)
-  hybridTotal += hybridCardFee;
-
-  const results: StrategyResult[] = [
+  return [
     {
       name: "1회권 조합",
-      totalCost: singleCost,
-      description: `공항 왕복(${useTaxi ? '택시' : 'RER'}) + 시내 이동 1회권 결제.`,
+      totalCost: singleTotal,
+      description: "공항 왕복 + 시내 이동 시마다 1회권 결제.",
       dailyBreakdown: singleBreakdown,
       cardName: input.cardType === 'Mobile' ? '모바일 나비고' : '나비고 이지'
     },
     {
-      name: "일일권(1 Day) 조합",
-      totalCost: dailyCost,
-      description: `공항 왕복(${useTaxi ? '택시' : 'RER'}) + 시내 체류일 일일권 이용.`,
+      name: "일일권 조합",
+      totalCost: dailyTotal,
+      description: "공항 왕복 + 시내 체류일 일일권(Jour) 이용.",
       dailyBreakdown: dailyBreakdown,
       cardName: input.cardType === 'Mobile' ? '모바일 나비고' : '나비고 이지'
     },
     {
       name: "최적 하이브리드",
       totalCost: hybridTotal,
-      description: semaineUsed 
-        ? "일정 중 나비고 주간권(Semaine)을 포함하여 공항 이동 및 시내 교통비를 절감하는 최적안입니다."
-        : "체류 기간이 짧거나 주말을 끼고 있어 주간권보다 1회권/일일권 조합이 더 저렴합니다.",
+      description: semaineUsed ? "주간권(Semaine)을 포함한 가장 경제적인 조합입니다." : "일정이 짧아 1회권/일일권 조합이 더 유리합니다.",
       dailyBreakdown: hybridBreakdown,
-      cardName: hybridCardName
+      cardName: input.cardType === 'Mobile' ? '모바일 나비고' : (decouverteRequired ? '데쿠베르트 + 이지카드' : '나비고 이지'),
+      isRecommended: true
     }
   ].sort((a, b) => a.totalCost - b.totalCost);
-
-  results[0].isRecommended = true;
-  return results;
 }
