@@ -123,34 +123,29 @@ export default function App() {
             </div>
 
             <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> Paris in
-                  </label>
-                  <input 
-                    type="date" 
-                    name="arrivalDate"
-                    value={input.arrivalDate}
-                    onChange={handleInputChange}
-                    /* 중요: 아래 className에서 appearance-none을 반드시 제거하세요 */
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-sm focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all"
-                    /* 인라인 style 속성이 있다면 아예 삭제하거나 빈 객체로 두세요 */
-                  />
+                {/* 날짜 입력부: grid-cols-1 sm:grid-cols-2 설정을 통해 모바일 대칭 확보 */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2 flex flex-col">
+                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1"><Calendar size={12} /> Paris in</label>
+                    <input 
+                      type="date" 
+                      name="arrivalDate"
+                      value={input.arrivalDate}
+                      onChange={handleInputChange}
+                      className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-[16px] focus:outline-none transition-all block"
+                    />
+                  </div>
+                  <div className="space-y-2 flex flex-col">
+                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1"><Calendar size={12} /> Paris out</label>
+                    <input 
+                      type="date" 
+                      name="departureDate"
+                      value={input.departureDate}
+                      onChange={handleInputChange}
+                      className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-[16px] focus:outline-none transition-all block"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
-                    <Calendar size={12} /> Paris out
-                  </label>
-                  <input 
-                    type="date" 
-                    name="departureDate"
-                    value={input.departureDate}
-                    onChange={handleInputChange}
-                    className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all text-sm appearance-none"
-                  />
-                </div>
-              </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
