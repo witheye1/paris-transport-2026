@@ -123,30 +123,6 @@ export default function App() {
             </div>
 
             <div className="space-y-6">
-                {/* 날짜 입력부: grid-cols-1 sm:grid-cols-2 설정을 통해 모바일 대칭 확보 */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2 flex flex-col">
-                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1"><Calendar size={12} /> Paris in</label>
-                    <input 
-                      type="date" 
-                      name="arrivalDate"
-                      value={input.arrivalDate}
-                      onChange={handleInputChange}
-                      className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-[16px] focus:outline-none transition-all block"
-                    />
-                  </div>
-                  <div className="space-y-2 flex flex-col">
-                    <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1"><Calendar size={12} /> Paris out</label>
-                    <input 
-                      type="date" 
-                      name="departureDate"
-                      value={input.departureDate}
-                      onChange={handleInputChange}
-                      className="w-full bg-white border border-[#141414]/10 rounded-xl px-4 py-3 min-h-[48px] text-[16px] focus:outline-none transition-all block"
-                    />
-                  </div>
-                </div>
-
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
