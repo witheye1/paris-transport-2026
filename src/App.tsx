@@ -154,8 +154,7 @@ export default function App() {
                 </div> {/* 4번 닫기 */}
             
               </div> {/* 2번 닫기 */}
-            </div> {/* 1번 닫기 */}
-              
+            
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1">
