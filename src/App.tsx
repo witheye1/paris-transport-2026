@@ -122,36 +122,42 @@ export default function App() {
               <p className="text-sm opacity-60">여행 정보를 입력하면 최적의 알고리즘이 가동됩니다.</p>
             </div>
             
-            <div className="space-y-5"> {/* 입력창 그룹 사이의 간격 */}
+            <div className="space-y-5 w-full"> {/* overflow-hidden을 제거하여 테두리가 잘리지 않게 합니다 */}
               
-              {/* Paris In 섹션 - 수직 배치 */}
-              <div className="space-y-2">
-                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1.5 ml-1">
-                  <Calendar size={13} className="opacity-70" /> PARIS IN
+              {/* PARIS IN 섹션 */}
+              <div className="space-y-2 w-full">
+                <label className="text-[11px] uppercase tracking-wider font-bold opacity-30 flex items-center gap-1.5 ml-1">
+                  <Calendar size={13} /> PARIS IN
                 </label>
-                <input 
-                  type="date" 
-                  name="arrivalDate"
-                  value={input.arrivalDate}
-                  onChange={handleInputChange}
-                  /* 스크린샷처럼 큼직하고 부드러운 사각형 디자인 적용 */
-                  className="w-full bg-white border border-[#141414]/10 rounded-2xl px-5 py-4 min-h-[56px] text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all block box-border"
-                />
+                {/* flex와 min-w-0 조합이 상자가 부모를 뚫고 나가는 것을 물리적으로 막아줍니다 */}
+                <div className="w-full flex min-w-0">
+                  <input 
+                    type="date" 
+                    name="arrivalDate"
+                    value={input.arrivalDate}
+                    onChange={handleInputChange}
+                    /* px-3.5로 여백을 살짝 줄여 좁은 화면에서도 텍스트 공간을 확보하고, box-border로 테두리를 안으로 넣었습니다 */
+                    className="flex-1 min-w-0 w-full bg-white border border-[#141414]/10 rounded-[18px] px-3.5 py-3.5 min-h-[52px] text-sm font-normal text-[#141414] focus:outline-none block box-border"
+                  />
+                </div>
               </div>
             
-              {/* Paris Out 섹션 - 수직 배치 */}
-              <div className="space-y-2">
-                <label className="text-[11px] uppercase tracking-wider font-bold opacity-50 flex items-center gap-1.5 ml-1">
-                  <Calendar size={13} className="opacity-70" /> PARIS OUT
+              {/* PARIS OUT 섹션 */}
+              <div className="space-y-2 w-full">
+                <label className="text-[11px] uppercase tracking-wider font-bold opacity-30 flex items-center gap-1.5 ml-1">
+                  <Calendar size={13} /> PARIS OUT
                 </label>
-                <input 
-                  type="date" 
-                  name="departureDate"
-                  value={input.departureDate}
-                  onChange={handleInputChange}
-                  className="w-full bg-white border border-[#141414]/10 rounded-2xl px-5 py-4 min-h-[56px] text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#141414]/5 transition-all block box-border"
-                />
+                <div className="w-full flex min-w-0">
+                  <input 
+                    type="date" 
+                    name="departureDate"
+                    value={input.departureDate}
+                    onChange={handleInputChange}
+                    className="flex-1 min-w-0 w-full bg-white border border-[#141414]/10 rounded-[18px] px-3.5 py-3.5 min-h-[52px] text-sm font-normal text-[#141414] focus:outline-none block box-border"
+                  />
+                </div>
               </div>
+
             
               <div className="space-y-4">
                 <div className="space-y-2">
