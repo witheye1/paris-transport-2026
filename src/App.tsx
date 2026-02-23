@@ -374,7 +374,7 @@ export default function App() {
                     <p className="text-xs font-bold opacity-40 uppercase tracking-wider">주의사항</p>
                     <ul className="text-sm space-y-1 list-disc list-inside opacity-80">
                       <li>실물 나비고 데쿠베르트는 공항구매 불가, 증명사진 필수</li>
-                      <li>모바일 나비고는 안드로이드/아이폰 모두 지원</li>
+                      <li>파리 in/out날은 공항-시내 간 이동만으로 가정</li>
                       <li>택시의 경우, 편도 50€ 기준으로 산정</li>
                     </ul>
                   </div>
