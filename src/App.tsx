@@ -23,6 +23,8 @@ import { format, parseISO, isAfter, getDay, addDays } from 'date-fns';
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
 // 데쿠베르트(실물 카드)를 살 수 있는 역·창구를 확인하는 공식 페이지
+// 모바일 나비고 앱 가입 방법 (네이버 블로그)
+const MOBILE_NAVIGO_GUIDE_URL = 'https://blog.naver.com/witheye1/224197768895';
 const POINTS_OF_SALE_URL = 'https://www.iledefrance-mobilites.fr/cartes/points-de-vente';
 
 export default function App() {
@@ -267,6 +269,17 @@ export default function App() {
                       안전하게 가려면 <strong>실물카드 구매를 추천</strong>합니다.
                     </p>
                   </div>
+                )}
+                {input.cardType === 'Mobile' && (
+                  <a
+                    href={MOBILE_NAVIGO_GUIDE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-2 bg-white border border-[#141414]/10 rounded-xl px-4 py-3 text-[12px] font-bold hover:bg-[#141414]/5 transition-all"
+                  >
+                    <span>📱 파리 교통카드(나비고) 앱 가입방법</span>
+                    <span className="text-[10px] font-normal opacity-50 shrink-0">블로그로 이동</span>
+                  </a>
                 )}
               </div>
             </div>
