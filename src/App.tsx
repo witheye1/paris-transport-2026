@@ -318,7 +318,7 @@ export default function App() {
                       <div className="rounded-lg bg-[#F5F5F0] p-3">
                         <p className="font-bold mb-1">나비고 데쿠베르트 (카드값 5€)</p>
                         <ul className="list-disc list-inside space-y-0.5 opacity-80">
-                          <li>주간권(Navigo Semaine) 충전</li>
+                          <li>주간권(Semaine) · 월권(Mois) · 연간권 등 기간권 충전</li>
                           <li>증명사진 필수, 공항에서는 구매 불가</li>
                         </ul>
                         <p className="text-[10px] opacity-60 mt-2">※ 1회권, 일일권 충전 가능 여부는 확인하지 못했어요. 이지에 담는 걸 기준으로 계산했습니다.</p>
