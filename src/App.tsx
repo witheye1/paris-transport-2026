@@ -310,7 +310,7 @@ export default function App() {
                         <ul className="list-disc list-inside space-y-0.5 opacity-80">
                           <li>1회권(t+) 최대 20장</li>
                           <li>일일권(Navigo Jour)</li>
-                          <li>공항 티켓(CDG/Orly RER), 루아시버스</li>
+                          <li>공항 티켓(CDG/Orly RER)</li>
                           <li>사진 필요 없음</li>
                         </ul>
                         <p className="text-[10px] opacity-60 mt-2">※ 공항 티켓은 1회권(t+)과 같은 카드에 같이 담을 수 없어요.</p>
