@@ -302,6 +302,29 @@ export default function App() {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
+                  <div className="bg-white border border-[#141414]/10 p-4 rounded-xl mb-4 text-left">
+                    <p className="text-[11px] font-bold mb-3 opacity-60">실물카드별로 충전할 수 있는 것</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs leading-relaxed">
+                      <div className="rounded-lg bg-[#F5F5F0] p-3">
+                        <p className="font-bold mb-1">나비고 이지 (카드값 2€)</p>
+                        <ul className="list-disc list-inside space-y-0.5 opacity-80">
+                          <li>1회권(t+) 최대 20장</li>
+                          <li>일일권(Navigo Jour)</li>
+                          <li>공항 티켓(CDG/Orly RER), 루아시버스</li>
+                          <li>사진 필요 없음</li>
+                        </ul>
+                        <p className="text-[10px] opacity-60 mt-2">※ 공항 티켓은 1회권(t+)과 같은 카드에 같이 담을 수 없어요.</p>
+                      </div>
+                      <div className="rounded-lg bg-[#F5F5F0] p-3">
+                        <p className="font-bold mb-1">나비고 데쿠베르트 (카드값 5€)</p>
+                        <ul className="list-disc list-inside space-y-0.5 opacity-80">
+                          <li>주간권(Navigo Semaine) 충전</li>
+                          <li>증명사진 필수, 공항에서는 구매 불가</li>
+                        </ul>
+                        <p className="text-[10px] opacity-60 mt-2">※ 1회권, 일일권 충전 가능 여부는 확인하지 못했어요. 이지에 담는 걸 기준으로 계산했습니다.</p>
+                      </div>
+                    </div>
+                  </div>
                   <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 flex gap-3 items-start">
                     <AlertCircle className="text-amber-500 shrink-0" size={18} />
                     <p className="text-xs text-amber-800 leading-relaxed text-left">
@@ -452,7 +475,7 @@ export default function App() {
                     <p className="text-xs font-bold opacity-40 uppercase tracking-wider">주의사항</p>
                     <ul className="text-sm space-y-1 list-disc list-inside opacity-80">
                       <li>실물 나비고 데쿠베르트는 공항구매 불가, 증명사진 필수</li>
-                      <li>파리 in/out날은 공항-시내 간 이동만으로 가정</li>
+                      <li>파리 in/out날은 공항-시내 간 이동을 기본으로 계산하고, 위에서 선택한 당일 시내 이용 횟수(기본 0회)를 더해요</li>
                       <li>택시는 2026 CDG 정액(우안 56€ 기준, 좌안은 65€)으로 산정 · 예약비 별도</li>
                       <li>요금은 {PRICE_BASIS_DATE} 기준이며 매년 1월에 바뀔 수 있어요</li>
                     </ul>
