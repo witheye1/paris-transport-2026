@@ -17,19 +17,19 @@ import {
   Navigation
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { calculateStrategies, TravelInput, CardType, StrategyResult } from './types';
-import { format, parseISO, isAfter, getDay } from 'date-fns';
+import { calculateStrategies, TravelInput, CardType, StrategyResult, PRICE_BASIS_DATE } from './types';
+import { format, parseISO, isAfter, getDay, addDays } from 'date-fns';
 
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
-export default function App() {
-  if (typeof window !== 'undefined') {
-    document.title = "파리 교통권 최적화 가이드 2026";
-  }
+// 데쿠베르트(실물 카드)를 살 수 있는 역·창구를 확인하는 공식 페이지
+const POINTS_OF_SALE_URL = 'https://www.iledefrance-mobilites.fr/cartes/points-de-vente';
+const RATP_POINTS_OF_SALE_URL = 'https://www.ratp.fr/titres-et-tarifs/points-de-vente';
 
+export default function App() {
   const [input, setInput] = useState<TravelInput>({
-    arrivalDate: format(new Date(), 'yyyy-MM-dd'),
-    departureDate: format(new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
+    arrivalDate: format(addDays(new Date(), 7), 'yyyy-MM-dd'),
+    departureDate: format(addDays(new Date(), 11), 'yyyy-MM-dd'),
     bagOption: 'Backpack+Carrier',
     dailyTrips: 4,
     cardType: 'Mobile',
@@ -50,26 +50,25 @@ export default function App() {
     const { name, value } = e.target;
     
     // 팝업(alert) 없이 즉시 상태를 업데이트하여 자유로운 날짜 선택을 보장합니다.
-    setInput(prev => ({
-      ...prev,
-      [name]: name === 'dailyTrips' ? parseInt(value) : value
-    }));
+    setInput(prev => {
+      const next = { ...prev, [name]: name === 'dailyTrips' ? parseInt(value) : value } as TravelInput;
+      // 도착일을 출발일보다 뒤로 옮기면 출발일을 도착일로 맞춰줍니다.
+      if (name === 'arrivalDate' && value && isAfter(parseISO(value), parseISO(prev.departureDate))) {
+        next.departureDate = value;
+      }
+      return next;
+    });
   };
 
-  const getDayColor = (dateStr: string) => {
-    const year = parseISO(input.arrivalDate).getFullYear();
-    const date = parseISO(`${year}-${dateStr.replace('/', '-')}`);
-    const day = getDay(date);
+  // iso: 'yyyy-MM-dd' (연말연시에도 연도가 틀리지 않도록 전체 날짜로 계산)
+  const getDayColor = (iso: string) => {
+    const day = getDay(parseISO(iso));
     if (day === 0) return 'text-red-500';
     if (day === 6) return 'text-blue-500';
     return 'opacity-60';
   };
 
-  const getDayName = (dateStr: string) => {
-    const year = parseISO(input.arrivalDate).getFullYear();
-    const date = parseISO(`${year}-${dateStr.replace('/', '-')}`);
-    return DAY_NAMES[getDay(date)];
-  };
+  const getDayName = (iso: string) => DAY_NAMES[getDay(parseISO(iso))];
 
   return (
     <div className="min-h-screen bg-[#F5F5F0] text-[#141414] font-sans selection:bg-[#5A5A40] selection:text-white">
@@ -126,13 +125,14 @@ export default function App() {
               
               {/* PARIS IN 섹션 */}
               <div className="space-y-2 w-full">
-                <label className="text-[11px] uppercase tracking-wider font-bold opacity-30 flex items-center gap-1.5 ml-1">
+                <label htmlFor="arrivalDate" className="text-[11px] uppercase tracking-wider font-bold opacity-30 flex items-center gap-1.5 ml-1">
                   <Calendar size={13} /> PARIS IN
                 </label>
                 {/* flex와 min-w-0 조합이 상자가 부모를 뚫고 나가는 것을 물리적으로 막아줍니다 */}
                 <div className="w-full flex min-w-0">
                   <input 
                     type="date" 
+                    id="arrivalDate"
                     name="arrivalDate"
                     value={input.arrivalDate}
                     onChange={handleInputChange}
@@ -144,13 +144,15 @@ export default function App() {
             
               {/* PARIS OUT 섹션 */}
               <div className="space-y-2 w-full">
-                <label className="text-[11px] uppercase tracking-wider font-bold opacity-30 flex items-center gap-1.5 ml-1">
+                <label htmlFor="departureDate" className="text-[11px] uppercase tracking-wider font-bold opacity-30 flex items-center gap-1.5 ml-1">
                   <Calendar size={13} /> PARIS OUT
                 </label>
                 <div className="w-full flex min-w-0">
                   <input 
                     type="date" 
+                    id="departureDate"
                     name="departureDate"
+                    min={input.arrivalDate}
                     value={input.departureDate}
                     onChange={handleInputChange}
                     className="flex-1 min-w-0 w-full bg-white border border-[#141414]/10 rounded-[18px] px-3.5 py-3.5 min-h-[52px] text-sm font-normal text-[#141414] focus:outline-none block box-border"
@@ -172,6 +174,7 @@ export default function App() {
                     ].map(opt => (
                       <button
                         key={opt.id}
+                        aria-pressed={input.bagOption === opt.id}
                         onClick={() => setInput(p => ({ ...p, bagOption: opt.id as any }))}
                         className={`flex-1 min-w-[100px] text-center px-2 py-3 rounded-xl border transition-all text-[11px] font-bold ${
                           input.bagOption === opt.id ? 'bg-[#141414] text-white shadow-lg' : 'bg-white border-[#141414]/10 hover:bg-[#141414]/5'
@@ -215,6 +218,7 @@ export default function App() {
                   {(['Mobile', 'Physical'] as const).map(type => (
                     <button
                       key={type}
+                      aria-pressed={input.cardType === type}
                       onClick={() => setInput(p => ({ ...p, cardType: type }))}
                       className={`flex flex-col items-center justify-center gap-2 px-4 py-4 rounded-xl border transition-all ${
                         input.cardType === type 
@@ -254,6 +258,28 @@ export default function App() {
                       <strong>현지 팁:</strong> 파리 공항(CDG)에서는 실물 나비고 데쿠베르트(장기권)를 판매하지 않습니다!
                       공항에서는 우선 <strong>나비고 이지(2€)</strong>를 사서 공항용 티켓을 충전해 시내로 이동하신 후, 
                       숙소 근처 역에서 데쿠베르트를 만드실 수 있습니다(증명 사진 필수).
+                      <br />
+                      <strong>지도 보는 법:</strong> 공식 지도에서 <strong>파란색 핀(Guichets Navigo)</strong>은 직원이 있는
+                      나비고 전용 창구라서 데쿠베르트를 구매할 확률이 높습니다. 회색 핀(Points de vente)은 판매만 하는 곳이라
+                      발급이 안 될 수 있어요.
+                      <br />
+                      <a
+                        href={POINTS_OF_SALE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-2 font-bold underline underline-offset-2"
+                      >
+                        데쿠베르트 구매 가능한 역·창구 확인하기 (IDFM 공식 지도)
+                      </a>
+                      <span className="mx-1 opacity-50">|</span>
+                      <a
+                        href={RATP_POINTS_OF_SALE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline underline-offset-2"
+                      >
+                        RATP 판매처
+                      </a>
                     </p>
                   </div>
                 </motion.div>
@@ -330,7 +356,7 @@ export default function App() {
                             {res.dailyBreakdown.map((day, dIdx) => (
                               <div key={dIdx} className="flex justify-between text-[11px] items-center">
                                 <div className="flex items-center gap-2">
-                                  <span className={getDayColor(day.date)}>{day.date} ({getDayName(day.date)})</span>
+                                  <span className={getDayColor(day.iso)}>{day.date} ({getDayName(day.iso)})</span>
                                 </div>
                                 <span className="font-medium flex-1 text-center px-2">{day.passType}</span>
                                 <span className="font-mono w-14 text-right">€{day.cost.toFixed(2)}</span>
@@ -341,12 +367,18 @@ export default function App() {
                       </div>
                         
 
+                      {res.isRecommended && res.savingsVsNext !== undefined && res.savingsVsNext > 0.005 && (
+                        <p className="text-xs font-bold text-[#5A5A40] mb-4">
+                          다음으로 저렴한 방법보다 €{res.savingsVsNext.toFixed(2)} 절약돼요
+                        </p>
+                      )}
+
                       <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-wider">
                         <div className="flex items-center gap-1">
                           <TrainFront size={14} /> {input.bagOption === 'MultiCarrier' ? 'Taxi Included' : 'RER Included'}
                         </div>
                         <div className="flex items-center gap-1">
-                          <Info size={14} /> 2026 Rates
+                          <Info size={14} /> 요금 기준 {PRICE_BASIS_DATE}
                         </div>
                       </div>
                     </motion.div>
@@ -365,9 +397,13 @@ export default function App() {
                   <div className="space-y-2">
                     <p className="text-xs font-bold opacity-40 uppercase tracking-wider text-left">선정이유</p>
                     <p className="text-sm leading-relaxed text-left">
-                      {results.find(r => r.isRecommended)?.name === '최적 하이브리드' 
-                        ? `도착일(${format(parseISO(input.arrivalDate), 'EEEE')})과 체류 기간을 고려했을 때, 주간권(Semaine)을 활용하는 것이 공항 이동 비용까지 커버하여 가장 경제적입니다.`
-                        : `체류 기간이 짧거나 주말을 포함하고 있어, 주간권보다는 필요한 만큼만 1회권이나 일일권을 구매하는 것이 더 저렴합니다.`}
+                      {(() => {
+                        const rec = results.find(r => r.isRecommended);
+                        const arrivalDay = DAY_NAMES[getDay(parseISO(input.arrivalDate))];
+                        return rec?.semaineUsed
+                          ? `도착일(${arrivalDay}요일)과 체류 기간을 고려했을 때, 주간권(Semaine)을 활용하는 것이 공항 이동 비용까지 커버하여 가장 경제적입니다. (주간권은 월~일 달력 기준이라 주 중반에 사도 일요일까지만 유효해요.)`
+                          : `체류 기간이 짧거나 이동이 적어, 주간권보다는 필요한 만큼만 1회권이나 일일권을 구매하는 것이 더 저렴합니다.`;
+                      })()}
                     </p>
                   </div>
                   <div className="space-y-2 text-left">
@@ -375,7 +411,8 @@ export default function App() {
                     <ul className="text-sm space-y-1 list-disc list-inside opacity-80">
                       <li>실물 나비고 데쿠베르트는 공항구매 불가, 증명사진 필수</li>
                       <li>파리 in/out날은 공항-시내 간 이동만으로 가정</li>
-                      <li>택시의 경우, 편도 50€ 기준으로 산정</li>
+                      <li>택시는 2026 CDG 정액(우안 56€ 기준, 좌안은 65€)으로 산정 · 예약비 별도</li>
+                      <li>요금은 {PRICE_BASIS_DATE} 기준이며 매년 1월에 바뀔 수 있어요</li>
                     </ul>
                   </div>
                 </div>
