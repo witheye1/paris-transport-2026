@@ -24,7 +24,6 @@ const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
 // 데쿠베르트(실물 카드)를 살 수 있는 역·창구를 확인하는 공식 페이지
 const POINTS_OF_SALE_URL = 'https://www.iledefrance-mobilites.fr/cartes/points-de-vente';
-const RATP_POINTS_OF_SALE_URL = 'https://www.ratp.fr/titres-et-tarifs/points-de-vente';
 
 export default function App() {
   const [input, setInput] = useState<TravelInput>({
@@ -32,6 +31,8 @@ export default function App() {
     departureDate: format(addDays(new Date(), 11), 'yyyy-MM-dd'),
     bagOption: 'Backpack+Carrier',
     dailyTrips: 4,
+    arrivalDayTrips: 0,
+    departureDayTrips: 0,
     cardType: 'Mobile',
   });
 
@@ -51,7 +52,7 @@ export default function App() {
     
     // 팝업(alert) 없이 즉시 상태를 업데이트하여 자유로운 날짜 선택을 보장합니다.
     setInput(prev => {
-      const next = { ...prev, [name]: name === 'dailyTrips' ? parseInt(value) : value } as TravelInput;
+      const next = { ...prev, [name]: ['dailyTrips', 'arrivalDayTrips', 'departureDayTrips'].includes(name) ? parseInt(value) : value } as TravelInput;
       // 도착일을 출발일보다 뒤로 옮기면 출발일을 도착일로 맞춰줍니다.
       if (name === 'arrivalDate' && value && isAfter(parseISO(value), parseISO(prev.departureDate))) {
         next.departureDate = value;
@@ -208,6 +209,33 @@ export default function App() {
                     <span>10회</span>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {([
+                    { name: 'arrivalDayTrips', label: '파리 IN 당일 대중교통 이용 계획', value: input.arrivalDayTrips },
+                    { name: 'departureDayTrips', label: '파리 OUT 당일 대중교통 이용 계획', value: input.departureDayTrips },
+                  ] as const).map(f => (
+                    <div key={f.name} className="space-y-2">
+                      <label htmlFor={f.name} className="text-[11px] tracking-wider font-bold opacity-50 flex items-center gap-1 leading-tight">
+                        {f.label}
+                      </label>
+                      <select
+                        id={f.name}
+                        name={f.name}
+                        value={f.value}
+                        onChange={handleInputChange}
+                        className="w-full bg-white border border-[#141414]/10 rounded-[14px] px-3 py-3 min-h-[48px] text-sm font-normal text-[#141414] focus:outline-none box-border"
+                      >
+                        {Array.from({ length: 11 }, (_, n) => (
+                          <option key={n} value={n}>{n}회</option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] italic opacity-50">
+                  공항 이동(RER/택시)을 제외하고, 도착일·출발일에 시내에서 추가로 타는 횟수예요. 기본값은 0회입니다.
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -231,6 +259,15 @@ export default function App() {
                     </button>
                   ))}
                 </div>
+                {input.cardType === 'Mobile' && (
+                  <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl flex gap-2 items-start">
+                    <AlertCircle className="text-amber-500 shrink-0" size={16} />
+                    <p className="text-[11px] text-amber-800 leading-relaxed text-left">
+                      갤럭시 일부 기종에서는 모바일 나비고가 잘 안 된다는 보고가 있어요. 
+                      안전하게 가려면 <strong>실물카드 구매를 추천</strong>합니다.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </section>
@@ -269,17 +306,9 @@ export default function App() {
                         rel="noopener noreferrer"
                         className="inline-block mt-2 font-bold underline underline-offset-2"
                       >
-                        데쿠베르트 구매 가능한 역·창구 확인하기 (IDFM 공식 지도)
+                        🗺️ 데쿠베르트 구매 가능한 역·창구 확인하기 (IDFM 공식 지도)
                       </a>
-                      <span className="mx-1 opacity-50">|</span>
-                      <a
-                        href={RATP_POINTS_OF_SALE_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline underline-offset-2"
-                      >
-                        RATP 판매처
-                      </a>
+                      <span className="block mt-1 text-[10px] opacity-70">클릭하면 공식 지도 사이트로 이동합니다.</span>
                     </p>
                   </div>
                 </motion.div>

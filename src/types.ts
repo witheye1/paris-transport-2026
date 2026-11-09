@@ -17,6 +17,10 @@ export interface TravelInput {
   departureDate: string;
   bagOption: BagOption;
   dailyTrips: number;
+  /** 파리 IN 당일(도착일) 공항 이동 외 시내 대중교통 이용 계획 횟수 (0~10) */
+  arrivalDayTrips: number;
+  /** 파리 OUT 당일(출발일) 공항 이동 외 시내 대중교통 이용 계획 횟수 (0~10) */
+  departureDayTrips: number;
   cardType: CardType;
 }
 
@@ -72,12 +76,19 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
   const airportTrips = (i: number) => (i === 0 ? 1 : 0) + (i === lastIdx ? 1 : 0);
   const isAirportDay = (i: number) => airportTrips(i) > 0;
 
+  /** 공항 이동 외에 그날 시내에서 추가로 타는 횟수 (도착일 + 출발일, 당일 입출국이면 합산) */
+  const extraTrips = (i: number) =>
+    (i === 0 ? input.arrivalDayTrips : 0) + (i === lastIdx ? input.departureDayTrips : 0);
+  /** 추가 시내 이동 비용: 1회권 N회 vs 일일권 중 저렴한 쪽 */
+  const extraCost = (i: number) => Math.min(extraTrips(i) * PASS_PRICES.SINGLE, PASS_PRICES.JOUR);
+  const extraLabel = (i: number) => (extraTrips(i) > 0 ? ` + 시내 ${extraTrips(i)}회` : '');
+
   /** 시내 이동 하루 비용: 1회권 N회 vs 일일권 중 저렴한 쪽 */
   const cityDayCost = Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR);
 
   /** 주간권 없이 보낼 때 그날의 비용 (공항 이동일은 공항비) */
   const normalDayCost = (i: number) =>
-    isAirportDay(i) ? airportTransferCost * airportTrips(i) : cityDayCost;
+    isAirportDay(i) ? airportTransferCost * airportTrips(i) + extraCost(i) : cityDayCost;
 
   /** 공항 이동 라벨: 도착일은 공항→시내, 출발일은 시내→공항 (당일 입출국이면 둘 다) */
   const airportLabel = (i: number) => {
@@ -87,19 +98,20 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
   };
 
   const normalDayLabel = (i: number) =>
-    isAirportDay(i) ? airportLabel(i) : '1회권/일일권 조합';
+    isAirportDay(i) ? airportLabel(i) + extraLabel(i) : '1회권/일일권 조합';
 
   // --- 1. Single Ticket Strategy ---
   const singleBreakdown: DailyDetail[] = days.map((day, i) => ({
     date: dayLabel(day),
     iso: dayIso(day),
-    passType: isAirportDay(i) ? airportLabel(i) : `1회권 ${input.dailyTrips}회`,
+    passType: isAirportDay(i) ? airportLabel(i) + extraLabel(i) : `1회권 ${input.dailyTrips}회`,
     cost: isAirportDay(i)
-      ? airportTransferCost * airportTrips(i)
+      ? airportTransferCost * airportTrips(i) + extraTrips(i) * PASS_PRICES.SINGLE
       : input.dailyTrips * PASS_PRICES.SINGLE,
   }));
   // 택시 이용 시 시내 이동이 없으면 이지카드 불필요
-  const needsEasySingle = input.cardType === 'Physical' && (!useTaxi || input.dailyTrips > 0);
+  const anyExtra = input.arrivalDayTrips + input.departureDayTrips > 0;
+  const needsEasySingle = input.cardType === 'Physical' && (!useTaxi || input.dailyTrips > 0 || anyExtra);
   const singleTotal =
     singleBreakdown.reduce((acc, cur) => acc + cur.cost, 0) + (needsEasySingle ? CARD_FEES.Easy : 0);
 
@@ -107,10 +119,10 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
   const dailyBreakdown: DailyDetail[] = days.map((day, i) => ({
     date: dayLabel(day),
     iso: dayIso(day),
-    passType: isAirportDay(i) ? airportLabel(i) : '일일권(Jour)',
-    cost: isAirportDay(i) ? airportTransferCost * airportTrips(i) : PASS_PRICES.JOUR,
+    passType: isAirportDay(i) ? airportLabel(i) + extraLabel(i) : '일일권(Jour)',
+    cost: isAirportDay(i) ? airportTransferCost * airportTrips(i) + extraCost(i) : PASS_PRICES.JOUR,
   }));
-  const needsEasyDaily = input.cardType === 'Physical' && (!useTaxi || input.dailyTrips > 0);
+  const needsEasyDaily = input.cardType === 'Physical' && (!useTaxi || input.dailyTrips > 0 || anyExtra);
   const dailyTotal =
     dailyBreakdown.reduce((acc, cur) => acc + cur.cost, 0) + (needsEasyDaily ? CARD_FEES.Easy : 0);
 
@@ -196,7 +208,7 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
       passByIndex.set(i, {
         date: dayLabel(day),
         iso: dayIso(day),
-        passType: useTaxi ? airportLabel(i) : `${airportLabel(i)} · 이지카드`,
+        passType: (useTaxi ? airportLabel(i) : `${airportLabel(i)} · 이지카드`) + extraLabel(i),
         cost: normalDayCost(i),
       });
     });
@@ -217,7 +229,7 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
     });
     const usesEasy = days.some((_, i) => {
       if (coveredIdx.has(i)) return false;
-      if (isAirportDay(i)) return !useTaxi; // 택시 공항 이동은 카드 불필요
+      if (isAirportDay(i)) return !useTaxi || extraTrips(i) > 0; // 택시 공항 이동만 하면 카드 불필요
       return cityDayCost > 0;
     });
     if (usesEasy) hybridCardFee += CARD_FEES.Easy;

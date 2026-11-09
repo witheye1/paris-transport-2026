@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { calculateStrategies, PASS_PRICES } from './types';
 
-const base = { bagOption: 'Backpack+Carrier', cardType: 'Mobile' } as const;
+const base = {
+  bagOption: 'Backpack+Carrier', cardType: 'Mobile', arrivalDayTrips: 0, departureDayTrips: 0,
+} as const;
 const rec = (input: Parameters<typeof calculateStrategies>[0]) =>
   calculateStrategies(input).find(r => r.isRecommended)!;
 
@@ -44,5 +46,17 @@ describe('calculateStrategies', () => {
     }).find(x => x.name === '최적 하이브리드')!;
     // 주간권 32.40 + 택시 2회
     expect(r.totalCost).toBeCloseTo(PASS_PRICES.SEMAINE + PASS_PRICES.AIRPORT_TAXI * 2, 2);
+  });
+
+  it('도착일/출발일 당일 시내 이용 횟수가 비용에 반영된다', () => {
+    const input = {
+      ...base, dailyTrips: 0, arrivalDayTrips: 3, departureDayTrips: 2,
+      arrivalDate: '2026-11-10', departureDate: '2026-11-12',
+    };
+    const single = calculateStrategies(input).find(x => x.name === '1회권 조합')!;
+    // RER 2회(28) + 시내 5회(12.75)
+    expect(single.totalCost).toBeCloseTo(PASS_PRICES.AIRPORT_RER * 2 + PASS_PRICES.SINGLE * 5, 2);
+    // 같은 주(화~목)이므로 주간권 32.40이 더 저렴
+    expect(rec(input).totalCost).toBeCloseTo(PASS_PRICES.SEMAINE, 2);
   });
 });
