@@ -38,6 +38,9 @@ export default function App() {
     cardType: 'Mobile',
   });
 
+  // 실물카드 비교표 펼침 여부
+  const [showCardCompare, setShowCardCompare] = useState(false);
+
   // 날짜 유효성 체크: 도착일이 출발일보다 뒤에 있으면 true
   const isInvalidDate = useMemo(() => {
     return isAfter(parseISO(input.arrivalDate), parseISO(input.departureDate));
@@ -302,6 +305,75 @@ export default function App() {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
+                  <div className="mb-4">
+                    <button
+                      type="button"
+                      aria-expanded={showCardCompare}
+                      onClick={() => setShowCardCompare(v => !v)}
+                      className="w-full flex items-center justify-between gap-2 bg-white border border-[#141414]/10 rounded-xl px-4 py-3 text-[12px] font-bold hover:bg-[#141414]/5 transition-all"
+                    >
+                      <span>🆚 카드 비교 (이지 vs 데쿠베르트)</span>
+                      <ChevronRight size={16} className={`transition-transform ${showCardCompare ? 'rotate-90' : ''}`} />
+                    </button>
+                    {showCardCompare && (
+                      <div className="bg-white border border-[#141414]/10 rounded-xl mt-2 p-3 text-left">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-[11px] leading-relaxed">
+                            <thead>
+                              <tr>
+                                <th className="pb-2 pr-2 text-left w-[18%]"></th>
+                                <th className="pb-2 pr-2 text-left">나비고 이지</th>
+                                <th className="pb-2 text-left">나비고 데쿠베르트</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                          <tr className="border-t border-[#141414]/10">
+                            <th scope="row" className="py-2 pr-2 text-left font-bold whitespace-nowrap align-top">카드값</th>
+                            <td className="py-2 pr-2 align-top">2€</td>
+                            <td className="py-2 align-top">5€</td>
+                          </tr>
+                          <tr className="border-t border-[#141414]/10">
+                            <th scope="row" className="py-2 pr-2 text-left font-bold whitespace-nowrap align-top">이런 분께</th>
+                            <td className="py-2 pr-2 align-top">도착일·짧은 이동, 1회권·일일권</td>
+                            <td className="py-2 align-top">4일 이상 체류, 주간권(월~일)</td>
+                          </tr>
+                          <tr className="border-t border-[#141414]/10">
+                            <th scope="row" className="py-2 pr-2 text-left font-bold whitespace-nowrap align-top">명의</th>
+                            <td className="py-2 pr-2 align-top">익명 (빌려줄 수 있음)</td>
+                            <td className="py-2 align-top">본인 명의 (사진 필수, 양도 불가)</td>
+                          </tr>
+                          <tr className="border-t border-[#141414]/10">
+                            <th scope="row" className="py-2 pr-2 text-left font-bold whitespace-nowrap align-top">충전 가능</th>
+                            <td className="py-2 pr-2 align-top">1회권, 일일권, 공항 티켓</td>
+                            <td className="py-2 align-top">일일권, 주간권, 월권</td>
+                          </tr>
+                          <tr className="border-t border-[#141414]/10">
+                            <th scope="row" className="py-2 pr-2 text-left font-bold whitespace-nowrap align-top">공항 이동</th>
+                            <td className="py-2 pr-2 align-top">공항 티켓(14€)을 따로 충전</td>
+                            <td className="py-2 align-top">주간권·월권은 공항 RER 포함(오를리발 제외)이라 따로 필요 없음</td>
+                          </tr>
+                          <tr className="border-t border-[#141414]/10">
+                            <th scope="row" className="py-2 pr-2 text-left font-bold whitespace-nowrap align-top">구매처</th>
+                            <td className="py-2 pr-2 align-top">공항·역 자판기·창구</td>
+                            <td className="py-2 align-top">Navigo 창구·일부 RATP 창구·승인 상점 (공항 불가)</td>
+                          </tr>
+                          <tr className="border-t border-[#141414]/10">
+                            <th scope="row" className="py-2 pr-2 text-left font-bold whitespace-nowrap align-top">분실·도난</th>
+                            <td className="py-2 pr-2 align-top">-</td>
+                            <td className="py-2 align-top">재발급 불가</td>
+                          </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <ul className="mt-3 text-[10px] opacity-70 space-y-1 list-disc list-inside">
+                          <li>공항 티켓(14€)과 1회권은 같은 이지카드에 동시에 담을 수 없어요. 공항 티켓을 다 쓴 뒤에 1회권을 충전하세요.</li>
+                          <li>일일권은 공항 구간에서는 쓸 수 없어요. 공항 이동 비용은 따로 계산돼요.</li>
+                          <li>데쿠베르트는 공항에서 살 수 없어요. 도착일에는 이지카드로 시내에 들어온 뒤 창구에서 만드세요(증명사진 필수).</li>
+                          <li>주간권은 월요일 0시~일요일 24시까지만 유효해요.</li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                   <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 flex gap-3 items-start">
                     <AlertCircle className="text-amber-500 shrink-0" size={18} />
                     <p className="text-xs text-amber-800 leading-relaxed text-left">
