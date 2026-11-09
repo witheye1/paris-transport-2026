@@ -302,29 +302,6 @@ export default function App() {
                   exit={{ opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-white border border-[#141414]/10 p-4 rounded-xl mb-4 text-left">
-                    <p className="text-[11px] font-bold mb-3 opacity-60">실물카드별로 충전할 수 있는 것</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs leading-relaxed">
-                      <div className="rounded-lg bg-[#F5F5F0] p-3">
-                        <p className="font-bold mb-1">나비고 이지 (카드값 2€)</p>
-                        <ul className="list-disc list-inside space-y-0.5 opacity-80">
-                          <li>1회권(t+) 최대 20장</li>
-                          <li>일일권(Navigo Jour)</li>
-                          <li>공항 티켓(CDG/Orly RER)</li>
-                          <li>사진 필요 없음</li>
-                        </ul>
-                        <p className="text-[10px] opacity-60 mt-2">※ 공항 티켓은 1회권(t+)과 같은 카드에 같이 담을 수 없어요.</p>
-                      </div>
-                      <div className="rounded-lg bg-[#F5F5F0] p-3">
-                        <p className="font-bold mb-1">나비고 데쿠베르트 (카드값 5€)</p>
-                        <ul className="list-disc list-inside space-y-0.5 opacity-80">
-                          <li>주간권(Semaine) · 월권(Mois) · 연간권 등 기간권 충전</li>
-                          <li>증명사진 필수, 공항에서는 구매 불가</li>
-                        </ul>
-                        <p className="text-[10px] opacity-60 mt-2">※ 1회권, 일일권 충전 가능 여부는 확인하지 못했어요. 이지에 담는 걸 기준으로 계산했습니다.</p>
-                      </div>
-                    </div>
-                  </div>
                   <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6 flex gap-3 items-start">
                     <AlertCircle className="text-amber-500 shrink-0" size={18} />
                     <p className="text-xs text-amber-800 leading-relaxed text-left">
