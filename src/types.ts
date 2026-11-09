@@ -81,7 +81,12 @@ export function calculateStrategies(input: TravelInput): StrategyResult[] {
     (i === 0 ? input.arrivalDayTrips : 0) + (i === lastIdx ? input.departureDayTrips : 0);
   /** 추가 시내 이동 비용: 1회권 N회 vs 일일권 중 저렴한 쪽 */
   const extraCost = (i: number) => Math.min(extraTrips(i) * PASS_PRICES.SINGLE, PASS_PRICES.JOUR);
-  const extraLabel = (i: number) => (extraTrips(i) > 0 ? ` + 시내 ${extraTrips(i)}회` : '');
+  const extraLabel = (i: number) => {
+    const n = extraTrips(i);
+    if (n === 0) return '';
+    // 1회권을 N번 사는 것보다 일일권이 싸면 일일권으로 표시
+    return n * PASS_PRICES.SINGLE > PASS_PRICES.JOUR ? ' + 시내 일일권(Jour)' : ` + 시내 1회권 ${n}회`;
+  };
 
   /** 시내 이동 하루 비용: 1회권 N회 vs 일일권 중 저렴한 쪽 */
   const cityDayCost = Math.min(input.dailyTrips * PASS_PRICES.SINGLE, PASS_PRICES.JOUR);
