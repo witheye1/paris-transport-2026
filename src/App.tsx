@@ -21,8 +21,8 @@ import {
   Ticket,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { calculateStrategies, TravelInput, BagOption, CardType, PRICE_BASIS_DATE } from './types';
-import { format, parseISO, isAfter, getDay, addDays, differenceInDays } from 'date-fns';
+import { calculateStrategies, TravelInput, BagOption, CardType, DailyDetail, PRICE_BASIS_DATE } from './types';
+import { format, parseISO, isAfter, getDay, addDays, differenceInDays, startOfWeek, endOfWeek } from 'date-fns';
 
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -57,6 +57,24 @@ const CARD_COMPARE_MORE = [
 
 // 공통 카드 스타일
 const CARD = 'bg-white rounded-3xl shadow-[0_2px_10px_rgba(25,31,40,0.05)]';
+
+/** 추천 전략의 날짜별 상세를 월~일 달력 격자로 변환 (주간권 적용일 표시용) */
+function buildWeekGrid(breakdown: DailyDetail[]) {
+  if (breakdown.length === 0) return [];
+  const first = parseISO(breakdown[0].iso);
+  const last = parseISO(breakdown[breakdown.length - 1].iso);
+  const start = startOfWeek(first, { weekStartsOn: 1 });
+  const total = differenceInDays(endOfWeek(last, { weekStartsOn: 1 }), start) + 1;
+  const byIso = new Map(breakdown.map(d => [d.iso, d]));
+  return Array.from({ length: total }, (_, i) => {
+    const date = addDays(start, i);
+    const iso = format(date, 'yyyy-MM-dd');
+    const d = byIso.get(iso);
+    return { iso, label: format(date, 'd'), inTrip: !!d, covered: !!d && d.passType.includes('주간권') };
+  });
+}
+
+const WEEK_HEAD = ['월', '화', '수', '목', '금', '토', '일'];
 
 /** 번호가 붙은 선택 단계의 머리글 */
 function StepHeader({
@@ -205,6 +223,11 @@ export default function App() {
   const cardInfo = CARD_OPTIONS.find(c => c.id === input.cardType)!;
 
   const showCardTip = input.cardType === 'Physical' && input.bagOption !== 'MultiCarrier';
+
+  // 추천 결과 아래에 보여줄 '날짜별 적용' 달력과 '다른 방법과 비교' 막대 데이터
+  const recommended = results.find(r => r.isRecommended);
+  const weekGrid = recommended?.semaineUsed ? buildWeekGrid(recommended.dailyBreakdown) : [];
+  const maxCost = results.length > 0 ? Math.max(...results.map(r => r.totalCost)) : 0;
 
   return (
     <div className="min-h-screen bg-[#F4F6F9] text-[#191F28] font-sans selection:bg-[#2F62E0] selection:text-white pb-24 lg:pb-0">
@@ -515,8 +538,8 @@ export default function App() {
                   </motion.div>
                 ) : (
                   results.map((res, idx) => (
+                    <React.Fragment key={res.name}>
                     <motion.div
-                      key={res.name}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
@@ -582,6 +605,65 @@ export default function App() {
                         </div>
                       </div>
                     </motion.div>
+
+                    {idx === 0 && weekGrid.length > 0 && (
+                      <div className={`${CARD} p-5`}>
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-base font-bold">날짜별 적용</h3>
+                          <span className="text-xs text-[#5B6573]">
+                            {input.bagOption === 'MultiCarrier' ? '택시는 별도 결제' : '공항 RER 포함'}
+                          </span>
+                        </div>
+                        <div className="mt-3.5 grid grid-cols-7 gap-1.5 text-center">
+                          {WEEK_HEAD.map((w, i) => (
+                            <span key={w} className={`text-xs ${i === 5 ? 'text-blue-600' : i === 6 ? 'text-red-600' : 'text-[#5B6573]'}`}>{w}</span>
+                          ))}
+                          {weekGrid.map(d => (
+                            <span
+                              key={d.iso}
+                              className={`h-9 rounded-xl text-[13px] flex items-center justify-center ${
+                                d.covered
+                                  ? 'bg-[#2F62E0] text-white font-bold'
+                                  : d.inTrip
+                                    ? 'bg-white border-2 border-[#C9D3E6] text-[#191F28] font-bold'
+                                    : 'bg-[#F2F4F6] text-[#5B6573]'
+                              }`}
+                            >
+                              {d.label}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-[#4E5968]">
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-[#2F62E0]" /> 주간권 적용</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-[#C9D3E6] bg-white" /> 그 외 이용일</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-[#F2F4F6]" /> 여행 외</span>
+                        </div>
+                        <p className="mt-2.5 text-xs text-[#5B6573]">주간권은 월~일 달력 주 단위로만 유효해요.</p>
+                      </div>
+                    )}
+
+                    {idx === 0 && (
+                      <div className={`${CARD} p-5`}>
+                        <h3 className="text-base font-bold">다른 방법과 비교</h3>
+                        <div className="mt-3.5 space-y-3">
+                          {results.map(r => (
+                            <div key={r.name}>
+                              <div className={`flex justify-between text-[13px] ${r.isRecommended ? 'font-bold' : 'text-[#4E5968]'}`}>
+                                <span>{r.name}</span>
+                                <span>€{r.totalCost.toFixed(2)}</span>
+                              </div>
+                              <div className="mt-1.5 h-2.5 rounded-full bg-[#F2F4F6]">
+                                <div
+                                  className={`h-2.5 rounded-full ${r.isRecommended ? 'bg-[#2F62E0]' : 'bg-[#B7C4DA]'}`}
+                                  style={{ width: `${maxCost > 0 ? Math.max(4, (r.totalCost / maxCost) * 100) : 0}%` }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    </React.Fragment>
                   ))
                 )}
               </AnimatePresence>
