@@ -28,6 +28,13 @@ npm run build    # dist/ 생성
 - 실물카드는 공항에서 데쿠베르트를 살 수 없어 도착일은 별도 계산 (이지카드 2€)
 - 택시는 주간권과 별도 결제
 
+## 백업 · 이전 디자인으로 되돌리기
+
+- 리디자인(선택 항목 4단계 UI) 이전 버전은 커밋 `87a5cf0` (`main` 브랜치 v1.1.0)입니다.
+- 리디자인은 `redesign/selection-ui` 브랜치에서 작업하며, 확인 후 PR로 `main`에 합칩니다.
+- 합친 뒤 마음에 안 들면: `git revert <머지 커밋>` 으로 되돌리거나, Vercel 대시보드 Deployments에서 이전 배포를 **Promote to Production** 하세요.
+- 계산 로직(`src/types.ts`, `src/types.test.ts`)은 리디자인에서 수정하지 않았습니다.
+
 ## 배포
 
 Vercel에 GitHub 저장소를 연결해 사용합니다 (Framework: Vite, Build: `npm run build`, Output: `dist`).
