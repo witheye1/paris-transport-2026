@@ -234,9 +234,13 @@ export default function App() {
       <header className="border-b border-[#191F28]/5 bg-white/85 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#2F62E0] rounded-full flex items-center justify-center text-white">
-              <Navigation size={20} />
-            </div>
+            <img
+              src="/navigo-easy.png"
+              alt="나비고 이지 카드"
+              width={30}
+              height={46}
+              className="h-[46px] w-auto shrink-0 drop-shadow-[0_2px_4px_rgba(25,31,40,0.25)]"
+            />
             <div>
               <h1 className="text-lg font-bold tracking-tight leading-tight">파리 여행 최적 교통권 추천</h1>
               <p className="text-[10px] uppercase tracking-widest text-[#5B6573] font-semibold">2026 Edition ©외눈이</p>
