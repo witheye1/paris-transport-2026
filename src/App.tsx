@@ -96,7 +96,7 @@ function StepHeader({
     <div className="flex items-center gap-2.5">
       <span
         className={`shrink-0 w-7 h-7 rounded-full text-sm font-bold flex items-center justify-center ${
-          done ? 'bg-[#2F62E0] text-white' : 'bg-[#FFF1D6] border-2 border-[#E8A21A] text-[#8A4B00]'
+          done ? 'bg-[#0B6FBF] text-white' : 'bg-[#F7E9F1] border-2 border-[#D9A3C4] text-[#6B2D55]'
         }`}
       >
         {n}
@@ -107,9 +107,9 @@ function StepHeader({
       </div>
       {required &&
         (done ? (
-          <span className="text-xs font-bold text-[#2F62E0] bg-[#EAF0FF] rounded-lg px-2 py-1">선택 완료</span>
+          <span className="text-xs font-bold text-[#0B6FBF] bg-[#E4F2FC] rounded-lg px-2 py-1">선택 완료</span>
         ) : (
-          <span className="text-xs font-bold text-[#8A4B00] bg-[#FFF1D6] rounded-lg px-2 py-1">선택 필요</span>
+          <span className="text-xs font-bold text-[#6B2D55] bg-[#F7E9F1] rounded-lg px-2 py-1">선택 필요</span>
         ))}
     </div>
   );
@@ -130,9 +130,9 @@ function ChoiceRow({
   desc: string;
 }) {
   const tone = selected
-    ? 'border-[#2F62E0] bg-[#F3F7FF]'
+    ? 'border-[#0B6FBF] bg-[#EFF8FE]'
     : pending
-      ? 'border-dashed border-[#E8A21A] bg-[#FFFBF1]'
+      ? 'border-dashed border-[#D9A3C4] bg-[#FCF3F8]'
       : 'border-[#E5E8EB] bg-white hover:border-[#B0B8C1]';
   return (
     <button
@@ -142,7 +142,7 @@ function ChoiceRow({
       className={`w-full flex items-center gap-3 text-left rounded-2xl border-2 px-4 py-3.5 transition-all ${tone}`}
     >
       {selected ? (
-        <span className="shrink-0 w-6 h-6 rounded-full bg-[#2F62E0] flex items-center justify-center">
+        <span className="shrink-0 w-6 h-6 rounded-full bg-[#0B6FBF] flex items-center justify-center">
           <Check size={14} strokeWidth={3.5} color="#fff" />
         </span>
       ) : (
@@ -230,20 +230,24 @@ export default function App() {
   const maxCost = results.length > 0 ? Math.max(...results.map(r => r.totalCost)) : 0;
 
   return (
-    <div className="min-h-screen bg-[#F4F6F9] text-[#191F28] font-sans selection:bg-[#2F62E0] selection:text-white pb-24 lg:pb-0">
+    <div style={{ backgroundImage: 'linear-gradient(180deg, #EBDDE9 0%, #F4F6FA 360px)' }} className="min-h-screen bg-[#F4F6FA] text-[#191F28] font-sans selection:bg-[#0B6FBF] selection:text-white pb-24 lg:pb-0">
       <header className="border-b border-[#191F28]/5 bg-white/85 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#2F62E0] rounded-full flex items-center justify-center text-white">
-              <Navigation size={20} />
-            </div>
+            <img
+              src="/navigo-easy.png"
+              alt="나비고 이지 카드"
+              width={30}
+              height={46}
+              className="h-[46px] w-auto shrink-0 drop-shadow-[0_2px_4px_rgba(25,31,40,0.25)]"
+            />
             <div>
               <h1 className="text-lg font-bold tracking-tight leading-tight">파리 여행 최적 교통권 추천</h1>
               <p className="text-[10px] uppercase tracking-widest text-[#5B6573] font-semibold">2026 Edition ©외눈이</p>
             </div>
           </div>
           <span className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#4E5968] bg-white rounded-full px-3 py-2 border border-[#191F28]/5">
-            <Info size={14} className="text-[#2F62E0]" /> 요금 기준 {PRICE_BASIS_DATE}
+            <Info size={14} className="text-[#0B6FBF]" /> 요금 기준 {PRICE_BASIS_DATE}
           </span>
         </div>
       </header>
@@ -289,14 +293,14 @@ export default function App() {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold">4단계 중 {doneCount}단계 선택 완료</span>
                 {allDone ? (
-                  <span className="text-[13px] font-bold text-[#2F62E0]">준비 끝!</span>
+                  <span className="text-[13px] font-bold text-[#0B6FBF]">준비 끝!</span>
                 ) : (
-                  <span className="text-[13px] font-bold text-[#8A4B00]">{needMessage}</span>
+                  <span className="text-[13px] font-bold text-[#6B2D55]">{needMessage}</span>
                 )}
               </div>
               <div className="mt-3 grid grid-cols-4 gap-1.5">
                 {segs.map((on, i) => (
-                  <div key={i} className={`h-2 rounded-full ${on ? 'bg-[#2F62E0]' : 'bg-[#FFD98A]'}`} />
+                  <div key={i} className={`h-2 rounded-full ${on ? 'bg-[#0B6FBF]' : 'bg-[#EBC8DD]'}`} />
                 ))}
               </div>
             </div>
@@ -305,7 +309,7 @@ export default function App() {
             <section aria-labelledby="step-date" className={`${CARD} p-5`}>
               <StepHeader id="step-date" n={1} title="파리 여행 날짜" sub="도착일과 출발일" done={dateDone} />
               <div className="mt-3.5 grid grid-cols-2 gap-2.5">
-                <label htmlFor="arrivalDate" className={`block rounded-2xl border-2 px-3.5 py-2.5 ${dateDone ? 'border-[#2F62E0] bg-[#F3F7FF]' : 'border-[#E5E8EB] bg-white'}`}>
+                <label htmlFor="arrivalDate" className={`block rounded-2xl border-2 px-3.5 py-2.5 ${dateDone ? 'border-[#0B6FBF] bg-[#EFF8FE]' : 'border-[#E5E8EB] bg-white'}`}>
                   <span className="flex items-center gap-1 text-xs text-[#4E5968]"><Calendar size={12} /> PARIS IN (도착)</span>
                   <input
                     type="date"
@@ -316,7 +320,7 @@ export default function App() {
                     className="mt-0.5 w-full min-w-0 bg-transparent text-[15px] font-bold text-[#191F28] focus:outline-none box-border"
                   />
                 </label>
-                <label htmlFor="departureDate" className={`block rounded-2xl border-2 px-3.5 py-2.5 ${dateDone ? 'border-[#2F62E0] bg-[#F3F7FF]' : 'border-[#E5E8EB] bg-white'}`}>
+                <label htmlFor="departureDate" className={`block rounded-2xl border-2 px-3.5 py-2.5 ${dateDone ? 'border-[#0B6FBF] bg-[#EFF8FE]' : 'border-[#E5E8EB] bg-white'}`}>
                   <span className="flex items-center gap-1 text-xs text-[#4E5968]"><Calendar size={12} /> PARIS OUT (출발)</span>
                   <input
                     type="date"
@@ -329,7 +333,7 @@ export default function App() {
                   />
                 </label>
               </div>
-              <div className="mt-2.5 bg-[#F4F6F9] rounded-xl px-3 py-2.5 text-[13px] leading-relaxed text-[#4E5968]">
+              <div className="mt-2.5 bg-[#F4F6FA] rounded-xl px-3 py-2.5 text-[13px] leading-relaxed text-[#4E5968]">
                 {isInvalidDate
                   ? '도착일(Paris In)이 출발일(Paris Out)보다 빠르도록 맞춰 주세요.'
                   : `${nights}박 ${nights + 1}일이에요. 주간권은 월~일 달력 주 단위로만 유효해요.`}
@@ -372,9 +376,9 @@ export default function App() {
               </div>
               {cardChosen && input.cardType === 'Mobile' && (
                 <div className="mt-2.5 space-y-2">
-                  <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl flex gap-2 items-start">
-                    <AlertCircle className="text-amber-600 shrink-0" size={16} />
-                    <p className="text-[12px] text-amber-900 leading-relaxed text-left">
+                  <div className="bg-[#EFF8FE] border border-[#BBD9F0] p-3 rounded-xl flex gap-2 items-start">
+                    <AlertCircle className="text-[#0B6FBF] shrink-0" size={16} />
+                    <p className="text-[12px] text-[#0B3C66] leading-relaxed text-left">
                       갤럭시 일부 기종에서는 모바일 나비고가 잘 안 된다는 보고가 있어요.
                       안전하게 가려면 <strong>실물카드 구매를 추천</strong>합니다.
                     </p>
@@ -383,7 +387,7 @@ export default function App() {
                     href={MOBILE_NAVIGO_GUIDE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between gap-2 bg-[#F4F6F9] rounded-xl px-4 py-3 text-[13px] font-bold hover:bg-[#EAF0FF] transition-all"
+                    className="flex items-center justify-between gap-2 bg-[#F4F6FA] rounded-xl px-4 py-3 text-[13px] font-bold hover:bg-[#E4F2FC] transition-all"
                   >
                     <span>📱 파리 교통카드(나비고) 앱 가입방법</span>
                     <span className="text-[11px] font-normal text-[#5B6573] shrink-0">블로그로 이동</span>
@@ -391,7 +395,7 @@ export default function App() {
                 </div>
               )}
               {cardChosen && input.cardType === 'Physical' && (
-                <div className="mt-2.5 bg-[#F4F6F9] rounded-xl px-3 py-2.5 text-[13px] leading-relaxed text-[#4E5968]">
+                <div className="mt-2.5 bg-[#F4F6FA] rounded-xl px-3 py-2.5 text-[13px] leading-relaxed text-[#4E5968]">
                   공항에서는 이지(2€)만 살 수 있어요. 데쿠베르트(5€)는 시내 창구에서 만드세요.
                 </div>
               )}
@@ -400,7 +404,7 @@ export default function App() {
             {/* 4. 하루 이용 횟수 */}
             <section aria-labelledby="step-trips" className={`${CARD} p-5`}>
               <StepHeader id="step-trips" n={4} title="하루 대중교통 이용 횟수" sub="공항 이동은 빼고, 시내에서 타는 횟수" done required={false} />
-              <div className="mt-3.5 flex items-center justify-between bg-[#F4F6F9] rounded-2xl p-2.5">
+              <div className="mt-3.5 flex items-center justify-between bg-[#F4F6FA] rounded-2xl p-2.5">
                 <button
                   type="button"
                   aria-label="이용 횟수 줄이기"
@@ -419,7 +423,7 @@ export default function App() {
                   aria-label="이용 횟수 늘리기"
                   onClick={() => changeDailyTrips(1)}
                   disabled={input.dailyTrips >= 10}
-                  className="w-12 h-12 rounded-2xl bg-[#2F62E0] text-white flex items-center justify-center disabled:opacity-40"
+                  className="w-12 h-12 rounded-2xl bg-[#0B6FBF] text-white flex items-center justify-center disabled:opacity-40"
                 >
                   <Plus size={20} strokeWidth={2.6} />
                 </button>
@@ -441,7 +445,7 @@ export default function App() {
                         name={f.name}
                         value={f.value}
                         onChange={handleInputChange}
-                        className="w-full bg-[#F4F6F9] rounded-xl px-3 py-3 min-h-[46px] text-sm font-medium text-[#191F28] focus:outline-none box-border"
+                        className="w-full bg-[#F4F6FA] rounded-xl px-3 py-3 min-h-[46px] text-sm font-medium text-[#191F28] focus:outline-none box-border"
                       >
                         {Array.from({ length: 11 }, (_, n) => (
                           <option key={n} value={n}>{n}회</option>
@@ -458,7 +462,7 @@ export default function App() {
               {allDone ? (
                 <a
                   href="#results"
-                  className="flex items-center justify-center gap-2 h-14 rounded-2xl bg-[#2F62E0] text-white text-[17px] font-bold shadow-[0_6px_16px_rgba(47,98,224,0.28)]"
+                  className="flex items-center justify-center gap-2 h-14 rounded-2xl bg-[#0B6FBF] text-white text-[17px] font-bold shadow-[0_6px_16px_rgba(11,111,191,0.28)]"
                 >
                   최적 교통권 보기 <ChevronRight size={20} strokeWidth={2.6} />
                 </a>
@@ -477,7 +481,7 @@ export default function App() {
                 <h2 className="text-2xl font-bold tracking-tight">추천 결과</h2>
                 <p className="text-sm text-[#4E5968] mt-1">가장 경제적인 이동 전략을 확인하세요.</p>
               </div>
-              <a href="#steps" className="lg:hidden shrink-0 text-[13px] font-bold text-[#2F62E0] bg-[#EAF0FF] rounded-full px-4 py-2.5">
+              <a href="#steps" className="lg:hidden shrink-0 text-[13px] font-bold text-[#0B6FBF] bg-[#E4F2FC] rounded-full px-4 py-2.5">
                 선택 수정하기
               </a>
             </div>
@@ -522,9 +526,9 @@ export default function App() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="bg-[#FFFBF1] border-2 border-dashed border-[#E8A21A] p-10 rounded-3xl text-center"
+                    className="bg-[#FCF3F8] border-2 border-dashed border-[#D9A3C4] p-10 rounded-3xl text-center"
                   >
-                    <div className="w-16 h-16 bg-[#FFF1D6] text-[#8A4B00] rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-[#F7E9F1] text-[#6B2D55] rounded-full flex items-center justify-center mx-auto mb-4">
                       <CreditCard size={30} />
                     </div>
                     <h3 className="text-lg font-bold mb-2">교통카드를 선택해 주세요</h3>
@@ -532,7 +536,7 @@ export default function App() {
                       카드 종류에 따라 요금과 추천 방법이 달라져요.<br />
                       3번에서 모바일 나비고 또는 실물카드를 고르면 결과가 나와요.
                     </p>
-                    <a href="#step-card" className="inline-block mt-4 text-[13px] font-bold text-[#8A4B00] bg-[#FFF1D6] rounded-full px-4 py-2.5 lg:hidden">
+                    <a href="#step-card" className="inline-block mt-4 text-[13px] font-bold text-[#6B2D55] bg-[#F7E9F1] rounded-full px-4 py-2.5 lg:hidden">
                       카드 선택하러 가기
                     </a>
                   </motion.div>
@@ -545,14 +549,17 @@ export default function App() {
                       transition={{ delay: idx * 0.1 }}
                       className={`relative overflow-hidden rounded-3xl p-6 bg-white ${
                         res.isRecommended
-                          ? 'border-2 border-[#2F62E0] shadow-[0_8px_28px_rgba(47,98,224,0.15)]'
+                          ? 'border-2 border-[#0B6FBF] shadow-[0_8px_28px_rgba(11,111,191,0.15)]'
                           : 'border border-[#191F28]/10 opacity-90 hover:opacity-100'
                       }`}
                     >
+                      {res.isRecommended && (
+                        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#E1BCCB] via-[#8BADD3] to-[#1695DA]" />
+                      )}
                       <div className="flex items-start justify-between mb-5">
                         <div className="space-y-1.5">
                           {res.isRecommended ? (
-                            <span className="inline-block text-xs font-bold text-[#2F62E0] bg-[#EAF0FF] rounded-lg px-2 py-1">추천 1위</span>
+                            <span className="inline-block text-xs font-bold text-[#0B6FBF] bg-[#E4F2FC] rounded-lg px-2 py-1">추천 1위</span>
                           ) : (
                             <span className="inline-block text-xs font-bold text-[#4E5968] bg-[#F2F4F6] rounded-lg px-2 py-1">{idx + 1}위</span>
                           )}
@@ -563,20 +570,20 @@ export default function App() {
                         </div>
                         <div className="text-right">
                           <p className="text-[11px] font-bold text-[#5B6573]">예상 비용</p>
-                          <p className={`text-3xl font-bold tracking-tight ${res.isRecommended ? 'text-[#2F62E0]' : ''}`}>
+                          <p className={`text-3xl font-bold tracking-tight ${res.isRecommended ? 'text-[#0B6FBF]' : ''}`}>
                             €{res.totalCost.toFixed(2)}
                           </p>
                         </div>
                       </div>
 
                       {res.isRecommended && res.savingsVsNext !== undefined && res.savingsVsNext > 0.005 && (
-                        <div className="flex items-center gap-2 bg-[#F4F6F9] rounded-xl px-3.5 py-3 mb-4">
-                          <Check size={18} strokeWidth={3} className="text-[#2F62E0] shrink-0" />
+                        <div className="flex items-center gap-2 bg-[#F4F6FA] rounded-xl px-3.5 py-3 mb-4">
+                          <Check size={18} strokeWidth={3} className="text-[#0B6FBF] shrink-0" />
                           <span className="text-sm font-bold">다음으로 저렴한 방법보다 €{res.savingsVsNext.toFixed(2)} 절약돼요</span>
                         </div>
                       )}
 
-                      <div className="p-4 rounded-2xl mb-5 bg-[#F4F6F9]">
+                      <div className="p-4 rounded-2xl mb-5 bg-[#F4F6FA]">
                         <p className="text-sm leading-relaxed text-[#191F28]/90 mb-4 text-left">
                           {res.description}
                         </p>
@@ -623,9 +630,9 @@ export default function App() {
                               key={d.iso}
                               className={`h-9 rounded-xl text-[13px] flex items-center justify-center ${
                                 d.covered
-                                  ? 'bg-[#2F62E0] text-white font-bold'
+                                  ? 'bg-[#0B6FBF] text-white font-bold'
                                   : d.inTrip
-                                    ? 'bg-white border-2 border-[#C9D3E6] text-[#191F28] font-bold'
+                                    ? 'bg-white border-2 border-[#BCD6EC] text-[#191F28] font-bold'
                                     : 'bg-[#F2F4F6] text-[#5B6573]'
                               }`}
                             >
@@ -634,8 +641,8 @@ export default function App() {
                           ))}
                         </div>
                         <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-[#4E5968]">
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-[#2F62E0]" /> 주간권 적용</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-[#C9D3E6] bg-white" /> 그 외 이용일</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-[#0B6FBF]" /> 주간권 적용</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded border-2 border-[#BCD6EC] bg-white" /> 그 외 이용일</span>
                           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-[#F2F4F6]" /> 여행 외</span>
                         </div>
                         <p className="mt-2.5 text-xs text-[#5B6573]">주간권은 월~일 달력 주 단위로만 유효해요.</p>
@@ -654,7 +661,7 @@ export default function App() {
                               </div>
                               <div className="mt-1.5 h-2.5 rounded-full bg-[#F2F4F6]">
                                 <div
-                                  className={`h-2.5 rounded-full ${r.isRecommended ? 'bg-[#2F62E0]' : 'bg-[#B7C4DA]'}`}
+                                  className={`h-2.5 rounded-full ${r.isRecommended ? 'bg-[#0B6FBF]' : 'bg-[#C4CEDB]'}`}
                                   style={{ width: `${maxCost > 0 ? Math.max(4, (r.totalCost / maxCost) * 100) : 0}%` }}
                                 />
                               </div>
@@ -671,7 +678,7 @@ export default function App() {
 
             {allDone && (
               <div className={`${CARD} p-6 space-y-5`}>
-                <div className="flex items-center gap-2 text-[#2F62E0]">
+                <div className="flex items-center gap-2 text-[#0B6FBF]">
                   <AlertCircle size={20} />
                   <h4 className="font-bold text-sm">Expert Advice</h4>
                 </div>
@@ -705,7 +712,7 @@ export default function App() {
             <div id="tips" className="space-y-3.5 scroll-mt-20">
               <div className="px-0.5 pt-2">
                 <h2 className="text-2xl font-bold tracking-tight">카드는 이렇게 달라요</h2>
-                <p className="text-sm font-bold text-[#2F62E0] mt-1">이지 vs 데쿠베르트</p>
+                <p className="text-sm font-bold text-[#0B6FBF] mt-1">이지 vs 데쿠베르트</p>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -715,7 +722,7 @@ export default function App() {
                 ] as const).map(col => (
                   <div
                     key={col.key}
-                    className={`${CARD} p-4 space-y-3 ${col.highlight ? 'border-2 border-[#2F62E0]' : 'border-2 border-transparent'}`}
+                    className={`${CARD} p-4 space-y-3 ${col.highlight ? 'border-2 border-[#0B6FBF]' : 'border-2 border-transparent'}`}
                   >
                     <div>
                       <p className="text-[13px] text-[#5B6573]">{col.title}</p>
@@ -735,7 +742,7 @@ export default function App() {
                 type="button"
                 aria-expanded={showCardCompare}
                 onClick={() => setShowCardCompare(v => !v)}
-                className="w-full flex items-center justify-between gap-2 bg-white rounded-2xl px-4 py-3.5 text-[13px] font-bold shadow-[0_2px_10px_rgba(25,31,40,0.05)] hover:bg-[#F3F7FF] transition-all"
+                className="w-full flex items-center justify-between gap-2 bg-white rounded-2xl px-4 py-3.5 text-[13px] font-bold shadow-[0_2px_10px_rgba(25,31,40,0.05)] hover:bg-[#EFF8FE] transition-all"
               >
                 <span>{showCardCompare ? '간단히 보기' : '충전 가능 · 구매처 · 분실·도난 자세히 보기'}</span>
                 <ChevronRight size={16} className={`transition-transform ${showCardCompare ? 'rotate-90' : ''}`} />
@@ -751,18 +758,18 @@ export default function App() {
               )}
 
               {/* 현지 팁 */}
-              <div className={`rounded-3xl p-5 flex gap-3 items-start ${showCardTip ? 'bg-[#FFF1C7] ring-2 ring-[#E8A21A]' : 'bg-[#FFF6DB]'}`}>
-                <div className="shrink-0 w-10 h-10 rounded-xl bg-[#FFE9A6] flex items-center justify-center text-[#7A5200]">
+              <div className={`rounded-3xl p-5 flex gap-3 items-start ${showCardTip ? 'bg-[#DDEEFA] ring-2 ring-[#7DB8E3]' : 'bg-[#E6F3FC]'}`}>
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-[#BFDDF3] flex items-center justify-center text-[#0B3C66]">
                   <MapPin size={22} />
                 </div>
                 <div className="space-y-1.5 text-left">
-                  <p className="text-[15px] font-bold text-[#4A3200]">공항에서는 데쿠베르트를 못 사요</p>
-                  <p className="text-[13px] leading-relaxed text-[#5C4200]">
+                  <p className="text-[15px] font-bold text-[#0B3C66]">공항에서는 데쿠베르트를 못 사요</p>
+                  <p className="text-[13px] leading-relaxed text-[#0B3C66]">
                     파리 공항(CDG)에서는 실물 나비고 데쿠베르트(장기권)를 판매하지 않습니다!
                     공항에서는 우선 <strong>나비고 이지(2€)</strong>를 사서 공항용 티켓을 충전해 시내로 이동하신 후,
                     숙소 근처 역에서 데쿠베르트를 만드실 수 있습니다(증명 사진 필수).
                   </p>
-                  <p className="text-[13px] leading-relaxed text-[#5C4200]">
+                  <p className="text-[13px] leading-relaxed text-[#0B3C66]">
                     <strong>지도 보는 법:</strong> 공식 지도에서 <strong>파란색 핀(Guichets Navigo)</strong>은 직원이 있는
                     나비고 전용 창구라서 데쿠베르트를 구매할 확률이 높습니다. 회색 핀(Points de vente)은 판매만 하는 곳이라
                     발급이 안 될 수 있어요.
@@ -774,10 +781,10 @@ export default function App() {
                 href={POINTS_OF_SALE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${CARD} flex items-center justify-between px-5 py-4 hover:bg-[#F3F7FF] transition-all`}
+                className={`${CARD} flex items-center justify-between px-5 py-4 hover:bg-[#EFF8FE] transition-all`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#EAF0FF] flex items-center justify-center text-[#2F62E0]">
+                  <div className="w-10 h-10 rounded-xl bg-[#E4F2FC] flex items-center justify-center text-[#0B6FBF]">
                     <MapPin size={22} />
                   </div>
                   <div>
@@ -792,10 +799,10 @@ export default function App() {
                 href={MOBILE_NAVIGO_GUIDE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${CARD} flex items-center justify-between px-5 py-4 hover:bg-[#F3F7FF] transition-all`}
+                className={`${CARD} flex items-center justify-between px-5 py-4 hover:bg-[#EFF8FE] transition-all`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#EAF0FF] flex items-center justify-center text-[#2F62E0]">
+                  <div className="w-10 h-10 rounded-xl bg-[#E4F2FC] flex items-center justify-center text-[#0B6FBF]">
                     <Smartphone size={22} />
                   </div>
                   <div>
